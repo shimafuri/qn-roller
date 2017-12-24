@@ -34,7 +34,6 @@
                     [0, 2, 4, 5, 7, 9, 11].includes(((pitch % 12)+12)%12)
                     ),
                 }">
-                {{pitch}}
               </div>
             </template>
           </div>
