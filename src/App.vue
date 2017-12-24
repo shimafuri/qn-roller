@@ -9,8 +9,8 @@
       </div>
     </div>
     <div style="flex: 1; height: 0;">
-      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
-        <div class="no-scrollbar" ref="pitchesPane" style="width: 64px; background-color: green;"
+      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: orange;">
+        <div class="no-scrollbar" ref="pitchesPane" style="margin-bottom: 17px; width: 64px; background-color: green;"
              @scroll="onScroll_pitchesPane($event)">
           <div
              :style="{
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div ref="notesPane"
-             style="flex: 1; overflow: scroll;"
+             style="flex: 1; overflow: scroll; background-color: white;"
              @scroll="onScroll_notesPane($event)">
           <div :style="{
               'position': 'relative',
