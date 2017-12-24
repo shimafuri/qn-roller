@@ -70,8 +70,8 @@ export default {
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
-      pitchMax: 9 * 12 - 1,
-      pitchMin: (-2) * 12,
+      pitchMax: 127,
+      pitchMin: 0,
       pitchHeight: 12,
       notes: [
         {
