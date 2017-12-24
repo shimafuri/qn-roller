@@ -14,15 +14,11 @@
              @scroll="onScroll_pitchesPane($event)">
           <div
              :style="{
-              'position': 'relative',
               'width': '100%',
               'height': (pitches.length * 20) + 'px',
               }">
             <template v-for="pitch in pitches">
               <div :style="{
-                'position': 'absolute',
-                'left': '0px',
-                'bottom': ((pitch - pitchMin) * 20) + 'px',
                 'width': '100%',
                 'height': '20px',
                 'background-color': (
@@ -32,6 +28,11 @@
                   :
                   'gray'
                   ),
+                }"
+                :class="{
+                  'non-scale-tone': !(
+                    [0, 2, 4, 5, 7, 9, 11].includes(((pitch % 12)+12)%12)
+                    ),
                 }">
                 {{pitch}}
               </div>
@@ -85,7 +86,7 @@ export default {
     pitches() {
       const pitches = [];
       for (let i = this.pitchMin ; i <= this.pitchMax ; i++) {
-        pitches.push(i);
+        pitches.unshift(i);
       }
       return pitches;
     }
@@ -133,6 +134,10 @@ html, body {
 
 .no-scrollbar::-webkit-scrollbar {
   display:none;
+}
+
+.non-scale-tone {
+  transition: height 0.5s ease-in-out;
 }
 
 h1, h2 {
