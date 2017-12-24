@@ -46,7 +46,7 @@
               'width': '2000px',
               'height': (pitches.length * 20) + 'px',
               }">
-            <template v-for="note in notes">
+            <!--<template v-for="note in notes">
               <div :style="{
                 'position': 'absolute',
                 'left': '40px',
@@ -56,7 +56,7 @@
                 'background-color': 'red',
                 }">   
               </div>
-            </template>
+            </template>-->
           </div>
         </div>
       </div>
