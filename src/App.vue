@@ -15,12 +15,12 @@
           <div
              :style="{
               'width': '100%',
-              'height': (pitches.length * 20) + 'px',
+              'height': (pitches.length * pitchHeight) + 'px',
               }">
             <template v-for="pitch in pitches">
               <div :style="{
                 'width': '100%',
-                'height': '20px',
+                'height': pitchHeight + 'px',
                 'background-color': (
                   [0, 2, 4, 5, 7, 9, 11].includes(((pitch % 12)+12)%12)
                   ?
@@ -44,15 +44,15 @@
           <div :style="{
               'position': 'relative',
               'width': '2000px',
-              'height': (pitches.length * 20) + 'px',
+              'height': (pitches.length * pitchHeight) + 'px',
               }">
             <!--<template v-for="note in notes">
               <div :style="{
                 'position': 'absolute',
                 'left': '40px',
-                'bottom': ((note.pitch - pitchMin) * 20) + 'px',
+                'bottom': ((note.pitch - pitchMin) * pitchHeight) + 'px',
                 'width': '20px',
-                'height': '20px',
+                'height': pitchHeight + 'px',
                 'background-color': 'red',
                 }">   
               </div>
@@ -72,6 +72,7 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       pitchMax: 9 * 12 - 1,
       pitchMin: (-2) * 12,
+      pitchHeight: 12,
       notes: [
         {
           startAt: 1920,
