@@ -93,14 +93,7 @@
                         'height': pitchHeight + 'px',
                         }">
                       <template v-for="note in chd.notes">
-                        <div v-if="note.pitch === pitch"
-                             :style="{
-                              'box-sizing': 'border-box',
-                              'width': ((note.duration / 1920.0) * barWidth) + 'px',
-                              'height': '100%',
-                              'background-color': 'blue',
-                          }">
-                        </div>
+                        <note v-if="note.pitch === pitch" :note="note" />
                       </template>
                       </div>
                     </template>
@@ -250,6 +243,21 @@ export default {
         this.$refs.headerPane.scrollLeft = $event.target.scrollLeft;
         this.$refs.pitchesPane.scrollTop = $event.target.scrollTop;
       }
+    },
+  },
+  components: {
+    'note': {
+      template: `
+        <div
+              :style="{
+              'box-sizing': 'border-box',
+              'width': ((note.duration / 1920.0) * barWidth) + 'px',
+              'height': '100%',
+              'background-color': 'blue',
+          }">
+        </div>
+      `,
+      props: ['note'],
     },
   },
 };
