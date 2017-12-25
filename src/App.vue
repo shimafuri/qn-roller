@@ -4,7 +4,29 @@
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
         <div style="width: 64px; background-color: red;">
         </div>
-        <div style="flex: 1; background-color: blue;">
+        <div class="no-scrollbar-holizontal" ref="headerPane" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
+            @scroll="onScroll_headerPane($event)">
+          <div :style="{
+              'display': 'flex',
+              'flex-flow': 'row nowrap',
+              'width': '2000px',
+              'height': '32px',
+              }">
+            <template v-for="int in scaleIntervals">
+              <div :style="{
+                'visibility': (int.scale != null ? 'visible' : 'hidden'),
+                'box-sizing': 'border-box',
+                'width': ((int.duration / 1920.0) * barWidth) + 'px',
+                'height': '16px',
+                'background-color': 'white',
+                'box-shadow': 'inset 0 0 2px black',
+                'text-align': 'left',
+                'font-size': '10px',
+                }">
+                {{JSON.stringify(int.scale)}}
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -119,6 +141,7 @@ export default {
         {
           globalOffset: 0,
           duration: 1920 * 4, // 4 bars
+          scale: [9, 11, 0, 2, 4, 5, 7], // A minor
           chordIntervals: [
             {
               globalOffset: 0,
@@ -170,6 +193,24 @@ export default {
             },
           ],
         },
+        {
+          globalOffset: 1920 * 4,
+          duration: 1920 * 7.5,
+          scale: null,
+          chordIntervals: [
+            {
+              globalOffset: 1920 * 4,
+              localOffset: 0,
+              notes: [],
+            },
+          ],
+        },
+        {
+          globalOffset: 1920 * 11.5,
+          duration: 1920 * 4,
+          scale: [9, 11, 0, 2, 4, 5, 7], // A minor
+          chordIntervals: [],
+        },
       ],
     };
   },
@@ -183,20 +224,31 @@ export default {
     }
   },
   methods: {
+    onScroll_headerPane($event) {
+      this.sentFrom_headerPane = true;
+      if (this.sentFrom_notesPane) { // Prevent mutual dependency
+        this.sentFrom_notesPane = false;
+      } else {
+        this.$refs.notesPane.scrollLeft = $event.target.scrollLeft;
+      }
+    },
     onScroll_pitchesPane($event) {
       this.sentFrom_pitchesPane = true;
       if (this.sentFrom_notesPane) { // Prevent mutual dependency (which causes performance degradation)
         this.sentFrom_notesPane = false;
       } else {
-        this.$refs.notesPane.scrollTop = $event.target.scrollTop
+        this.$refs.notesPane.scrollTop = $event.target.scrollTop;
       }
     },
     onScroll_notesPane($event) {
       this.sentFrom_notesPane = true;
-      if (this.sentFrom_pitchesPane) { // Prevent mutual dependency
+      if (this.sentFrom_headerPane) { // Prevent mutual dependency
+        this.sentFrom_headerPane = false;
+      } else if (this.sentFrom_pitchesPane) { // Prevent mutual dependency
         this.sentFrom_pitchesPane = false;
       } else {
-        this.$refs.pitchesPane.scrollTop = $event.target.scrollTop
+        this.$refs.headerPane.scrollLeft = $event.target.scrollLeft;
+        this.$refs.pitchesPane.scrollTop = $event.target.scrollTop;
       }
     },
   },
@@ -224,6 +276,14 @@ html, body {
 }
 
 .no-scrollbar::-webkit-scrollbar {
+  display:none;
+}
+
+.no-scrollbar-holizontal {
+  overflow-x: auto;
+}
+
+.no-scrollbar-holizontal::-webkit-scrollbar {
   display:none;
 }
 
