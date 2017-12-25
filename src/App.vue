@@ -4,7 +4,7 @@
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
         <div style="width: 64px; background-color: red;">
         </div>
-        <div class="no-scrollbar-holizontal" ref="headerPane" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
+        <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
             @scroll="onScroll_headerPane($event)">
           <div :style="{
               'display': 'flex',
@@ -32,7 +32,7 @@
     </div>
     <div style="flex: 1; height: 0;">
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: orange;">
-        <div class="no-scrollbar" ref="pitchesPane" style="margin-bottom: 17px; width: 64px; background-color: green;"
+        <div ref="pitchesPane" class="no-scrollbar" style="margin-bottom: 17px; width: 64px; background-color: green;"
              @scroll="onScroll_pitchesPane($event)">
           <div
              :style="{
