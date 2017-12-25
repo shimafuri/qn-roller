@@ -276,7 +276,7 @@ html, body {
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display:none;
+  display: none;
 }
 
 .no-scrollbar-holizontal {
@@ -284,7 +284,7 @@ html, body {
 }
 
 .no-scrollbar-holizontal::-webkit-scrollbar {
-  display:none;
+  display: none;
 }
 
 .non-scale-tone {
