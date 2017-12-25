@@ -42,10 +42,50 @@
              style="flex: 1; overflow: scroll; background-color: white;"
              @scroll="onScroll_notesPane($event)">
           <div :style="{
+              'display': 'flex',
+              'flex-flow': 'row nowrap',
               'position': 'relative',
               'width': '2000px',
               'height': (pitches.length * pitchHeight) + 'px',
               }">
+            <template v-for="int in scaleIntervals">
+              <div :style="{
+                'display': 'flex',
+                'flex-flow': 'row nowrap',
+                'box-sizing': 'border-box',
+                'width': ((int.duration / 1920.0) * barWidth) + 'px',
+                'height': '100%',
+                'box-shadow': 'inset 0 0 2px black',
+                }">
+                <template v-for="chd in int.chordIntervals">
+                  <div :style="{
+                    'display': 'flex',
+                    'flex-flow': 'column nowrap',
+                    'width': ((chd.duration / 1920.0) * barWidth) + 'px',
+                    'height': '100%',
+                    'box-shadow': 'inset 0 0 2px red',
+                    }">
+                    <template v-for="pitch in pitches">
+                      <div :style="{
+                        'width': '100%',
+                        'height': pitchHeight + 'px',
+                        }">
+                      <template v-for="note in chd.notes">
+                        <div v-if="note.pitch === pitch"
+                             :style="{
+                              'box-sizing': 'border-box',
+                              'width': ((note.duration / 1920.0) * barWidth) + 'px',
+                              'height': '100%',
+                              'background-color': 'blue',
+                          }">
+                        </div>
+                      </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </template>
             <!--<template v-for="note in notes">
               <div :style="{
                 'position': 'absolute',
@@ -70,14 +110,65 @@ export default {
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
+      barWidth: 128,
       pitchMax: 127,
       pitchMin: 0,
-      pitchHeight: 12,
-      notes: [
+      pitchHeight: 6,
+      granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
+      scaleIntervals: [
         {
-          startAt: 1920,
-          duration: 1920,
-          pitch: 48,
+          globalOffset: 0,
+          duration: 1920 * 4, // 4 bars
+          chordIntervals: [
+            {
+              globalOffset: 0,
+              localOffset: 0,
+              duration: 1920,
+              notes: [
+                {
+                  globalOffset: 0,
+                  localOffset: 0,
+                  pitch: 12 + (4 + 4*12), // E4
+                },
+              ],
+            },
+            {
+              globalOffset: 1920,
+              localOffset: 1920,
+              duration: 1920,
+              notes: [
+                {
+                  globalOffset: 1920,
+                  localOffset: 0,
+                  pitch: 12 + (2 + 4*12), // D4
+                },
+              ],
+            },
+            {
+              globalOffset: 1920 * 2,
+              localOffset: 1920 * 2,
+              duration: 1920,
+              notes: [
+                {
+                  globalOffset: 1920 * 2,
+                  localOffset: 0,
+                  pitch: 12 + (2 + 4*12), // D4
+                },
+              ],
+            },
+            {
+              globalOffset: 1920 * 3,
+              localOffset: 1920 * 3,
+              duration: 1920,
+              notes: [
+                {
+                  globalOffset: 1920 * 3,
+                  localOffset: 0,
+                  pitch: 12 + (0 + 4*12), // C4
+                },
+              ],
+            },
+          ],
         },
       ],
     };
