@@ -136,53 +136,44 @@ export default {
       granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
       scaleIntervals: [
         {
-          globalOffset: 0,
           duration: 1920 * 4, // 4 bars
           scale: [9, 11, 0, 2, 4, 5, 7], // A minor
           chordIntervals: [
             {
-              globalOffset: 0,
               localOffset: 0,
               duration: 1920,
               notes: [
                 {
-                  globalOffset: 0,
                   localOffset: 0,
                   pitch: 12 + (4 + 4*12), // E4
                 },
               ],
             },
             {
-              globalOffset: 1920,
               localOffset: 1920,
               duration: 1920,
               notes: [
                 {
-                  globalOffset: 1920,
                   localOffset: 0,
                   pitch: 12 + (2 + 4*12), // D4
                 },
               ],
             },
             {
-              globalOffset: 1920 * 2,
               localOffset: 1920 * 2,
               duration: 1920,
               notes: [
                 {
-                  globalOffset: 1920 * 2,
                   localOffset: 0,
                   pitch: 12 + (2 + 4*12), // D4
                 },
               ],
             },
             {
-              globalOffset: 1920 * 3,
               localOffset: 1920 * 3,
               duration: 1920,
               notes: [
                 {
-                  globalOffset: 1920 * 3,
                   localOffset: 0,
                   pitch: 12 + (0 + 4*12), // C4
                 },
@@ -191,19 +182,16 @@ export default {
           ],
         },
         {
-          globalOffset: 1920 * 4,
           duration: 1920 * 7.5,
           scale: null,
           chordIntervals: [
             {
-              globalOffset: 1920 * 4,
               localOffset: 0,
               notes: [],
             },
           ],
         },
         {
-          globalOffset: 1920 * 11.5,
           duration: 1920 * 4,
           scale: [9, 11, 0, 2, 4, 5, 7], // A minor
           chordIntervals: [],
