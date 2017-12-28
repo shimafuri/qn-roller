@@ -88,7 +88,10 @@
                     'box-shadow': 'inset 0 0 2px red',
                     }">
                     <template v-for="pitch in pitches">
-                      <div :style="{
+                      <div :class="{
+                        'scale-tone': int.scale && int.scale.includes(pitch % 12),
+                        'non-scale-tone': int.scale && !int.scale.includes(pitch % 12),
+                        }" :style="{
                         'width': '100%',
                         'height': pitchHeight + 'px',
                         }">
