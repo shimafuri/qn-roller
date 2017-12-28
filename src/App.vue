@@ -16,7 +16,7 @@
               <div :style="{
                 'visibility': (int.scale != null ? 'visible' : 'hidden'),
                 'box-sizing': 'border-box',
-                'width': ((int.duration / 1920.0) * barWidth) + 'px',
+                'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
                 'height': '16px',
                 'background-color': 'white',
                 'box-shadow': 'inset 0 0 2px black',
@@ -75,7 +75,7 @@
                 'display': 'flex',
                 'flex-flow': 'row nowrap',
                 'box-sizing': 'border-box',
-                'width': ((int.duration / 1920.0) * barWidth) + 'px',
+                'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
                 'height': '100%',
                 'box-shadow': 'inset 0 0 2px black',
                 }">
@@ -83,7 +83,7 @@
                   <div :style="{
                     'display': 'flex',
                     'flex-flow': 'column nowrap',
-                    'width': ((chd.duration / 1920.0) * barWidth) + 'px',
+                    'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                     'height': '100%',
                     'box-shadow': 'inset 0 0 2px red',
                     }">
@@ -120,12 +120,16 @@
 </template>
 
 <script>
+const global = {
+  barWidth: 128,
+};
+
 export default {
   name: 'app',
   data() {
     return {
+      global: global,
       msg: 'Welcome to Your Vue.js App',
-      barWidth: 128,
       pitchMax: 127,
       pitchMin: 0,
       pitchHeight: 6,
@@ -251,12 +255,17 @@ export default {
         <div
               :style="{
               'box-sizing': 'border-box',
-              'width': ((note.duration / 1920.0) * barWidth) + 'px',
+              'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
               'background-color': 'blue',
           }">
         </div>
       `,
+      data() {
+        return {
+          global: global,
+        };
+      },
       props: ['note'],
     },
   },
