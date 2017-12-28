@@ -141,48 +141,88 @@ export default {
         {
           duration: 1920 * 4, // 4 bars
           scale: [9, 11, 0, 2, 4, 5, 7], // A minor
-          chordIntervals: [
-            {
-              localOffset: 0,
-              duration: 1920,
-              notes: [
-                {
-                  localOffset: 0,
-                  pitch: 12 + (4 + 4*12), // E4
-                },
-              ],
-            },
-            {
-              localOffset: 1920,
-              duration: 1920,
-              notes: [
-                {
-                  localOffset: 0,
-                  pitch: 12 + (2 + 4*12), // D4
-                },
-              ],
-            },
-            {
-              localOffset: 1920 * 2,
-              duration: 1920,
-              notes: [
-                {
-                  localOffset: 0,
-                  pitch: 12 + (2 + 4*12), // D4
-                },
-              ],
-            },
-            {
-              localOffset: 1920 * 3,
-              duration: 1920,
-              notes: [
-                {
-                  localOffset: 0,
-                  pitch: 12 + (0 + 4*12), // C4
-                },
-              ],
-            },
-          ],
+          chordIntervals: (() => {
+            let arr = [];
+            for (let i = 0 ; i < 2 ; i++) {
+              arr = arr.concat(
+                [
+                  {
+                    localOffset: 0,
+                    duration: 1920,
+                    notes: [
+                      {
+                        localOffset: 0,
+                        pitch: 12 + (7 + 2*12),
+                      },
+                      {
+                        localOffset: 480,
+                        pitch: 12 + (4 + 2*12),
+                      },
+                      {
+                        localOffset: 960,
+                        pitch: 12 + (9 + 1*12),
+                      },
+                    ],
+                  },
+                  {
+                    localOffset: 1920,
+                    duration: 1920,
+                    notes: [
+                      {
+                        localOffset: 0,
+                        pitch: 12 + (4 + 2*12),
+                      },
+                      {
+                        localOffset: 480,
+                        pitch: 12 + (0 + 2*12),
+                      },
+                      {
+                        localOffset: 960,
+                        pitch: 12 + (5 + 1*12),
+                      },
+                    ],
+                  },
+                  {
+                    localOffset: 1920 * 2,
+                    duration: 1920,
+                    notes: [
+                      {
+                        localOffset: 0,
+                        pitch: 12 + (5 + 2*12),
+                      },
+                      {
+                        localOffset: 480,
+                        pitch: 12 + (2 + 2*12),
+                      },
+                      {
+                        localOffset: 960,
+                        pitch: 12 + (7 + 1*12),
+                      },
+                    ],
+                  },
+                  {
+                    localOffset: 1920 * 3,
+                    duration: 1920,
+                    notes: [
+                      {
+                        localOffset: 0,
+                        pitch: 12 + (11 + 2*12),
+                      },
+                      {
+                        localOffset: 480,
+                        pitch: 12 + (7 + 2*12),
+                      },
+                      {
+                        localOffset: 960,
+                        pitch: 12 + (0 + 2*12),
+                      },
+                    ],
+                  },
+                ]
+              );
+            }
+            return arr;
+          })(),
         },
         {
           duration: 1920 * 7.5,
