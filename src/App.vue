@@ -2,7 +2,7 @@
   <div id="app" style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;">
     <div style="height: 32px;">
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
-        <div style="width: 64px; background-color: red;">
+        <div style="width: 64px; background-color: rgb(39, 42, 45);">
         </div>
         <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
             @scroll="onScroll_headerPane($event)">
@@ -11,6 +11,7 @@
               'flex-flow': 'row nowrap',
               'width': '2000px',
               'height': '32px',
+              'background-color': 'rgb(42, 45, 49)',
               }">
             <template v-for="int in scaleIntervals">
               <div :style="{
@@ -31,37 +32,37 @@
       </div>
     </div>
     <div style="flex: 1; height: 0;">
-      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: orange;">
-        <div ref="pitchesPane" class="no-scrollbar" style="margin-bottom: 17px; width: 64px; background-color: green;"
-             @scroll="onScroll_pitchesPane($event)">
-          <div
-             :style="{
-              'width': '100%',
-              'height': (pitches.length * pitchHeight) + 'px',
-              }">
-            <template v-for="pitch in pitches">
-              <div :style="{
+      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
+        <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
+          <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
+            @scroll="onScroll_pitchesPane($event)">
+            <div
+              :style="{
                 'width': '100%',
-                'height': pitchHeight + 'px',
-                'background-color': (
-                  [0, 2, 4, 5, 7, 9, 11].includes(((pitch % 12)+12)%12)
-                  ?
-                  'white'
-                  :
-                  'gray'
-                  ),
-                }"
-                :class="{
-                  'non-scale-tone': !(
-                    [0, 2, 4, 5, 7, 9, 11].includes(((pitch % 12)+12)%12)
-                    ),
+                'height': (pitches.length * pitchHeight) + 'px',
+                'background-color': 'rgb(240, 242, 243)',
                 }">
-              </div>
-            </template>
+              <template v-for="pitch in pitches">
+                <div :style="{
+                  'height': pitchHeight + 'px',
+                  }"
+                  :class="{
+                    'piano-key': true,
+                    'scale-tone': (
+                      [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                      ),
+                    'non-scale-tone': !(
+                      [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                      ),
+                  }">
+                </div>
+              </template>
+            </div>
           </div>
+          <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
         </div>
         <div ref="notesPane"
-             style="flex: 1; overflow: scroll; background-color: white;"
+             style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
              @scroll="onScroll_notesPane($event)">
           <div :style="{
               'display': 'flex',
@@ -89,6 +90,7 @@
                     }">
                     <template v-for="pitch in pitches">
                       <div :class="{
+                        'pianoroll-key': true,
                         'scale-tone': int.scale && int.scale.includes(pitch % 12),
                         'non-scale-tone': int.scale && !int.scale.includes(pitch % 12),
                         }" :style="{
@@ -286,9 +288,10 @@ export default {
         <div
               :style="{
               'box-sizing': 'border-box',
+              'border': '1px black solid',
               'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
-              'background-color': 'blue',
+              'background-color': 'rgb(62, 137, 155)',
           }">
         </div>
       `,
@@ -335,7 +338,47 @@ html, body {
   display: none;
 }
 
-.non-scale-tone {
+.piano-key.scale-tone {
+  width: 100%;
+  background-color: rgb(240, 242, 243);
+}
+
+.piano-key.non-scale-tone {
+  width: 41px;
+  background-color: rgb(42, 47, 50);
+  transition: height 0.5s ease-in-out;
+}
+
+.pianoroll-key.scale-tone {
+  background-color: rgb(42, 45, 49);
+}
+
+.pianoroll-key.non-scale-tone {
+  background-color: rgb(35, 37, 39);
+}
+
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.scale-tone {
+  box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
+}
+
+.pianoroll-key.scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.scale-tone {
+  box-shadow: inset 0px 1px 0px rgb(24, 25, 27);
+}
+
+.pianoroll-key.non-scale-tone {
+  background-color: rgb(35, 37, 39);
   transition: height 0.5s ease-in-out;
 }
 
