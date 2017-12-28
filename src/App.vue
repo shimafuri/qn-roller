@@ -1,8 +1,13 @@
 <template>
-  <div id="app" style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;">
+  <div id="app"
+    :class="{
+      'flag-collapse': flagCollapse,
+    }"
+    style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;">
     <div style="height: 32px;">
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
         <div style="width: 64px; background-color: rgb(39, 42, 45);">
+          <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
         </div>
         <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
             @scroll="onScroll_headerPane($event)">
@@ -97,9 +102,16 @@
                         'width': '100%',
                         'height': pitchHeight + 'px',
                         }">
-                      <template v-for="note in chd.notes">
-                        <note v-if="note.pitch === pitch" :note="note" />
-                      </template>
+                        <div :class="{
+                          'pianoroll-key-inner': true,
+                          }" :style="{
+                          'width': '100%',
+                          'height': '100%',
+                          }">
+                          <template v-for="note in chd.notes">
+                            <note v-if="note.pitch === pitch" :note="note" />
+                          </template>
+                        </div>
                       </div>
                     </template>
                   </div>
@@ -134,6 +146,7 @@ export default {
   data() {
     return {
       global: global,
+      flagCollapse: false,
       msg: 'Welcome to Your Vue.js App',
       pitchMax: 127,
       pitchMin: 0,
@@ -177,6 +190,10 @@ export default {
                       {
                         localOffset: 480,
                         pitch: 12 + (0 + 2*12),
+                      },
+                      {
+                        localOffset: 480,
+                        pitch: 12 + (1 + 2*12),
                       },
                       {
                         localOffset: 960,
@@ -285,13 +302,12 @@ export default {
   components: {
     'note': {
       template: `
-        <div
+        <div class="note"
               :style="{
               'box-sizing': 'border-box',
               'border': '1px black solid',
               'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
-              'background-color': 'rgb(62, 137, 155)',
           }">
         </div>
       `,
@@ -346,15 +362,68 @@ html, body {
 .piano-key.non-scale-tone {
   width: 41px;
   background-color: rgb(42, 47, 50);
-  transition: height 0.5s ease-in-out;
 }
 
-.pianoroll-key.scale-tone {
+.piano-key.non-scale-tone {
+  transition: height 0.5s ease-in-out;
+}
+#app:not(.flag-collapse) .piano-key.non-scale-tone {
+}
+#app.flag-collapse .piano-key.non-scale-tone {
+  height: 0 !important;
+}
+
+.pianoroll-key {
+  overflow: visible;
+}
+
+.pianoroll-key > .pianoroll-key-inner {
+  overflow: visible;
+}
+
+.pianoroll-key.scale-tone > .pianoroll-key-inner {
   background-color: rgb(42, 45, 49);
 }
 
-.pianoroll-key.non-scale-tone {
+.pianoroll-key.non-scale-tone > .pianoroll-key-inner {
   background-color: rgb(35, 37, 39);
+}
+
+.pianoroll-key.scale-tone .note {
+  background-color: rgb(62, 137, 155);
+}
+
+.pianoroll-key.non-scale-tone .note {
+  background-color: rgb(247, 31, 31);
+}
+
+.pianoroll-key.non-scale-tone {
+  transition: height 0.5s ease-in-out;
+}
+#app:not(.flag-collapse) .pianoroll-key.non-scale-tone {
+}
+#app.flag-collapse .pianoroll-key.non-scale-tone {
+  height: 0 !important;
+}
+.pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+  position: relative;
+  transition: top 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+#app:not(.flag-collapse) .pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+  top: 0;
+}
+#app.flag-collapse .pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+  top: -2px;
+  height: 4px !important;
+}
+.pianoroll-key.non-scale-tone .note {
+  transition: border-radius 0.5s ease-in-out;
+}
+#app:not(.flag-collapse) .pianoroll-key.non-scale-tone .note {
+  border-radius: 0px;
+}
+#app.flag-collapse .pianoroll-key.non-scale-tone .note {
+  border-radius: 16px;
 }
 
 .pianoroll-key.non-scale-tone +
@@ -375,11 +444,6 @@ html, body {
 .pianoroll-key.scale-tone +
 .pianoroll-key.scale-tone {
   box-shadow: inset 0px 1px 0px rgb(24, 25, 27);
-}
-
-.pianoroll-key.non-scale-tone {
-  background-color: rgb(35, 37, 39);
-  transition: height 0.5s ease-in-out;
 }
 
 h1, h2 {
