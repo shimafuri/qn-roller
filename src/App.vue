@@ -426,24 +426,32 @@ html, body {
   border-radius: 16px;
 }
 
-.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone > .pianoroll-key-inner {
+  background-color: rgb(42, 45, 49);
+  transition: box-shadow 0.5s ease-in-out;
+}
+#app:not(.flag-collapse) .pianoroll-key.non-scale-tone +
 .pianoroll-key.scale-tone +
 .pianoroll-key.non-scale-tone +
 .pianoroll-key.scale-tone +
 .pianoroll-key.non-scale-tone +
 .pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone {
+.pianoroll-key.scale-tone > .pianoroll-key-inner {
   box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
 }
-
-.pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.non-scale-tone +
+#app:not(.flag-collapse) .pianoroll-key.scale-tone +
 .pianoroll-key.scale-tone +
 .pianoroll-key.non-scale-tone +
 .pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone {
+.pianoroll-key.non-scale-tone +
+.pianoroll-key.scale-tone +
+.pianoroll-key.scale-tone > .pianoroll-key-inner {
   box-shadow: inset 0px 1px 0px rgb(24, 25, 27);
+}
+#app.flag-collapse 
+.pianoroll-key.scale-tone +
+.pianoroll-key.scale-tone > .pianoroll-key-inner {
+  box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
 }
 
 h1, h2 {
