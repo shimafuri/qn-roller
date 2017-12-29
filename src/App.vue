@@ -150,7 +150,7 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       pitchMax: 127,
       pitchMin: 0,
-      pitchHeight: 6,
+      pitchHeight: 16,
       granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
       scaleIntervals: [
         {
