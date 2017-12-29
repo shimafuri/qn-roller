@@ -317,8 +317,10 @@ export default {
       template: `
         <div class="note"
               :style="{
+              'position': 'relative',
               'box-sizing': 'border-box',
               'border': '1px black solid',
+              'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
               'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
           }">
