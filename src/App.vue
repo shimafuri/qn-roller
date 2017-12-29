@@ -163,77 +163,90 @@ export default {
                 [
                   {
                     localOffset: 0,
-                    duration: 1920,
+                    duration: 960,
                     notes: [
                       {
                         localOffset: 0,
-                        pitch: 12 + (7 + 2*12),
+                        duration: 240,
+                        pitch: 12 + (9 + 1*12),
                       },
                       {
-                        localOffset: 480,
+                        localOffset: 240,
+                        duration: 240,
                         pitch: 12 + (4 + 2*12),
                       },
                       {
-                        localOffset: 960,
-                        pitch: 12 + (9 + 1*12),
+                        localOffset: 480,
+                        duration: 480,
+                        pitch: 12 + (7 + 2*12),
                       },
                     ],
                   },
                   {
-                    localOffset: 1920,
-                    duration: 1920,
+                    localOffset: 960,
+                    duration: 960,
                     notes: [
                       {
                         localOffset: 0,
-                        pitch: 12 + (4 + 2*12),
+                        duration: 240,
+                        pitch: 12 + (5 + 1*12),
                       },
                       {
-                        localOffset: 480,
+                        localOffset: 240,
+                        duration: 240,
                         pitch: 12 + (0 + 2*12),
                       },
                       {
-                        localOffset: 480,
+                        localOffset: 240,
+                        duration: 240,
                         pitch: 12 + (1 + 2*12),
                       },
                       {
-                        localOffset: 960,
-                        pitch: 12 + (5 + 1*12),
+                        localOffset: 480,
+                        duration: 480,
+                        pitch: 12 + (4 + 2*12),
                       },
                     ],
                   },
                   {
-                    localOffset: 1920 * 2,
-                    duration: 1920,
+                    localOffset: 960 * 2,
+                    duration: 960,
                     notes: [
                       {
                         localOffset: 0,
-                        pitch: 12 + (5 + 2*12),
+                        duration: 240,
+                        pitch: 12 + (7 + 1*12),
                       },
                       {
-                        localOffset: 480,
+                        localOffset: 240,
+                        duration: 240,
                         pitch: 12 + (2 + 2*12),
                       },
                       {
-                        localOffset: 960,
-                        pitch: 12 + (7 + 1*12),
+                        localOffset: 480,
+                        duration: 480,
+                        pitch: 12 + (5 + 2*12),
                       },
                     ],
                   },
                   {
-                    localOffset: 1920 * 3,
-                    duration: 1920,
+                    localOffset: 960 * 3,
+                    duration: 960,
                     notes: [
                       {
                         localOffset: 0,
-                        pitch: 12 + (11 + 2*12),
+                        duration: 240,
+                        pitch: 12 + (0 + 2*12),
                       },
                       {
-                        localOffset: 480,
+                        localOffset: 240,
+                        duration: 240,
                         pitch: 12 + (7 + 2*12),
                       },
                       {
-                        localOffset: 960,
-                        pitch: 12 + (0 + 2*12),
+                        localOffset: 480,
+                        duration: 480,
+                        pitch: 12 + (11 + 2*12),
                       },
                     ],
                   },
