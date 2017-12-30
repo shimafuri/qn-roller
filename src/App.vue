@@ -3,7 +3,9 @@
     :class="{
       'flag-collapse': flagCollapse,
     }"
-    style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;">
+    style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;"
+    @dragover="onDragOver($event)"
+    @drop="onDrop($event)">
     <div style="height: 32px;">
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
         <div style="width: 64px; background-color: rgb(39, 42, 45);">
@@ -138,6 +140,9 @@
 </template>
 
 <script>
+import * as MIDIFile from 'midifile';
+import * as MIDIEvents from 'midievents';
+
 const global = {
   barWidth: 128,
 };
@@ -285,6 +290,170 @@ export default {
     }
   },
   methods: {
+    onDragOver($event) {
+      $event.stopPropagation();
+      $event.preventDefault(); // default dragover event handler must be canceled to enable drop event
+    },
+    onDrop($event) {
+      $event.stopPropagation();
+      $event.preventDefault();
+
+      const files = $event.dataTransfer.files;
+      if (!files) {
+        alert('Please drop a file.');
+        return;
+      }
+      if (files.length !== 1) {
+        alert('Please specify a single file.');
+        return;
+      }
+
+      {
+        const file = files[0];
+        alert(`${file.name} (${file.type}) - ${file.size} bytes (${file.lastModifiedDate.toLocaleDateString()})`);
+
+        const reader = new FileReader();
+        reader.onloadstart = (event) => {
+          console.log(event);
+        };
+        reader.onprogress = (event) => {
+          console.log(event);
+        };
+        reader.onloadend = (event) => {
+          console.log(event);
+        };
+        reader.onload = (event) => {
+          console.log(event);
+          const midiFile = new MIDIFile(reader.result);
+          // console.log(midiFile);
+          // console.log('getFormat: ' + midiFile.header.getFormat());
+          // console.log('getSMPTEFrames: ' + midiFile.header.getSMPTEFrames());
+          // console.log('getTickResolution: ' + midiFile.header.getTickResolution());
+          // console.log('getTicksPerBeat: ' + midiFile.header.getTicksPerBeat());
+          // console.log('getTicksPerFrame: ' + midiFile.header.getTicksPerFrame());
+          // console.log('getTimeDivision: ' + midiFile.header.getTimeDivision());
+          // console.log('getTracksCount: ' + midiFile.header.getTracksCount());
+          switch (midiFile.header.getFormat()) {
+            case 0:
+              //console.log(midiFile.getMidiEvents());
+              const trackEventsChunk = midiFile.tracks[0].getTrackContent();
+              const midiEventIterator = MIDIEvents.createParser(trackEventsChunk); // 3rd argument enables strict mode
+
+              // Clear the current scale intervals only if the runtime reach here
+              this.scaleIntervals.length = 0;
+
+              const midiNotes = [];
+              // Temporary variables
+              const noteStates = (new Array(16)).fill(new Array(128));
+              for (let i = 0 ; i < noteStates.length ; i++) {
+                for (let j = 0 ; j < noteStates[i].length ; j++) {
+                  noteStates[i][j] = { isOn: false, onTime: null };
+                }
+              }
+              // console.log(noteStates);
+              let midiEvent;
+              let tick = 0;
+              while (midiEvent = midiEventIterator.next()) {
+                // console.log(midiEvent);
+                tick += midiEvent.delta;
+                // console.log(`tick = ${tick}`);
+
+                // Only accept specific MIDI events (Note Off and Note On)
+                switch (midiEvent.type) {
+                  case MIDIEvents.EVENT_MIDI:
+                    switch (midiEvent.subtype) {
+                      case MIDIEvents.EVENT_MIDI_NOTE_OFF: {
+                        if (midiEvent.channel === 9) {
+                          // console.info(`The note (Tick = ${tick}, Pitch = ${midiEvent.param1}) is in the drum channel. Ignored.`);
+                          break;
+                        }
+
+                        const ns = noteStates[midiEvent.channel][midiEvent.param1];
+                        if (ns.isOn === true) {
+                          midiNotes.push(
+                            {
+                              channel: midiEvent.channel,
+                              localOffset: ns.onTime,
+                              duration: tick - ns.onTime,
+                              pitch: midiEvent.param1,
+                            },
+                          );
+                          ns.isOn = false;
+                          ns.onTime = null;
+                          // console.log(`The note (Channel = ${midiEvent.channel}, Pitch = ${midiEvent.param1}) was just set to OFF!`);
+                        } else {
+                          // console.warn(`The note (Channel = ${midiEvent.channel}, Pitch = ${midiEvent.param1}) is already OFF. Ignored.`);
+                        }
+                        break;
+                      }
+                      case MIDIEvents.EVENT_MIDI_NOTE_ON: {
+                        if (midiEvent.channel === 9) {
+                          // console.info(`The note (Tick = ${tick}, Pitch = ${midiEvent.param1}) is in the drum channel. Ignored.`);
+                          break;
+                        }
+
+                        const ns = noteStates[midiEvent.channel][midiEvent.param1];
+                        if (ns.isOn === false) {
+                          ns.isOn = true;
+                          ns.onTime = tick;
+                          // console.log(`The note (Channel = ${midiEvent.channel}, Pitch = ${midiEvent.param1}) was just set to ON!`);
+                        } else {
+                          if (ns.onTime === tick) {
+                            // console.warn(`Duplicate Note On detected (Tick = ${tick}, Channel = ${midiEvent.channel}, Pitch = ${midiEvent.param1}). Ignored.`);
+                          } else {
+                            midiNotes.push(
+                              {
+                                channel: midiEvent.channel,
+                                localOffset: ns.onTime,
+                                duration: tick - ns.onTime,
+                                pitch: midiEvent.param1,
+                              },
+                            );
+                            ns.onTime = tick;
+                            // console.warn(`The note (Channel = ${midiEvent.channel}, Pitch = ${midiEvent.param1}) is already ON. Treated as OFF+ON.`);
+                          }
+                        }
+                        break;
+                      }
+                      default:
+                    }
+                    break;
+                  default:
+                }
+              }
+              this.scaleIntervals.push(
+                {
+                  duration: tick,
+                  scale: [9, 11, 0, 2, 4, 5, 7],
+                  chordIntervals: [
+                    {
+                      localOffset: 0,
+                      duration: tick,
+                      notes: midiNotes,
+                    },
+                  ],
+                }
+              );
+              // console.log(this.scaleIntervals);
+              break;
+            case 1:
+              alert('Format 1 is not supported!');
+              break;
+            case 2:
+              alert('Format 2 is not supported!');
+              return;
+            default:
+          }
+        };
+        reader.onabort = (event) => {
+          console.log(event);
+        };
+        reader.onerror = (event) => {
+          console.log(event);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    },
     onScroll_headerPane($event) {
       this.sentFrom_headerPane = true;
       if (this.sentFrom_notesPane) { // Prevent mutual dependency

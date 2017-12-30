@@ -14,6 +14,8 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "midievents": "^1.0.1",
+    "midifile": "^1.0.4",
     "vue": "^2.5.2"
   },
   "devDependencies": {
