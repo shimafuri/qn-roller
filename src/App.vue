@@ -105,6 +105,7 @@
                         <div :class="{
                           'pianoroll-key-inner': true,
                           }" :style="{
+                          'position': 'relative',
                           'width': '100%',
                           'height': '100%',
                           }">
@@ -317,7 +318,7 @@ export default {
       template: `
         <div class="note"
               :style="{
-              'position': 'relative',
+              'position': 'absolute',
               'box-sizing': 'border-box',
               'border': '1px black solid',
               'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
