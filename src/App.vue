@@ -455,29 +455,32 @@ export default {
       }
     },
     onScroll_headerPane($event) {
-      this.sentFrom_headerPane = true;
-      if (this.sentFrom_notesPane) { // Prevent mutual dependency
-        this.sentFrom_notesPane = false;
-      } else {
+      $event.target.scrollLeftAtLatestScrollEvent = $event.target.scrollLeft; // Deal with delay of subsequent scroll event
+      if (!this.$refs.notesPane.scrollLeftAtLatestScrollEvent
+          ||
+          this.$refs.notesPane.scrollLeftAtLatestScrollEvent !== $event.target.scrollLeft) {
         this.$refs.notesPane.scrollLeft = $event.target.scrollLeft;
       }
     },
     onScroll_pitchesPane($event) {
-      this.sentFrom_pitchesPane = true;
-      if (this.sentFrom_notesPane) { // Prevent mutual dependency (which causes performance degradation)
-        this.sentFrom_notesPane = false;
-      } else {
+      $event.target.scrollTopAtLatestScrollEvent = $event.target.scrollTop; // Deal with delay of subsequent scroll event
+      if (this.$refs.notesPane.scrollTopAtLatestScrollEvent == null
+          ||
+          this.$refs.notesPane.scrollTopAtLatestScrollEvent !== $event.target.scrollTop) {
         this.$refs.notesPane.scrollTop = $event.target.scrollTop;
       }
     },
     onScroll_notesPane($event) {
-      this.sentFrom_notesPane = true;
-      if (this.sentFrom_headerPane) { // Prevent mutual dependency
-        this.sentFrom_headerPane = false;
-      } else if (this.sentFrom_pitchesPane) { // Prevent mutual dependency
-        this.sentFrom_pitchesPane = false;
-      } else {
+      $event.target.scrollLeftAtLatestScrollEvent = $event.target.scrollLeft; // Deal with delay of subsequent scroll event
+      $event.target.scrollTopAtLatestScrollEvent = $event.target.scrollTop;
+      if (this.$refs.headerPane.scrollLeftAtLatestScrollEvent == null
+          ||
+          this.$refs.headerPane.scrollLeftAtLatestScrollEvent !== $event.target.scrollLeft) {
         this.$refs.headerPane.scrollLeft = $event.target.scrollLeft;
+      }
+      if (this.$refs.pitchesPane.scrollTopAtLatestScrollEvent == null
+          ||
+          this.$refs.pitchesPane.scrollTopAtLatestScrollEvent !== $event.target.scrollTop) {
         this.$refs.pitchesPane.scrollTop = $event.target.scrollTop;
       }
     },
