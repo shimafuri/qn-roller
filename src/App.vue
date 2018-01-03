@@ -256,7 +256,7 @@ export default {
                       },
                     ],
                   },
-                ]
+                ],
               );
             }
             return arr;
@@ -294,7 +294,7 @@ export default {
         pitches.unshift(i);
       }
       return pitches;
-    }
+    },
   },
   methods: {
     onDragOver($event) {
@@ -341,7 +341,7 @@ export default {
           // console.log('getTimeDivision: ' + midiFile.header.getTimeDivision());
           // console.log('getTracksCount: ' + midiFile.header.getTracksCount());
           switch (midiFile.header.getFormat()) {
-            case 0:
+            case 0: {
               //console.log(midiFile.getMidiEvents());
               const trackEventsChunk = midiFile.tracks[0].getTrackContent();
               const midiEventIterator = MIDIEvents.createParser(trackEventsChunk); // 3rd argument enables strict mode
@@ -439,17 +439,21 @@ export default {
                       notes: midiNotes,
                     },
                   ],
-                }
+                },
               );
               // console.log(this.scaleIntervals);
               break;
-            case 1:
+            }
+            case 1: {
               alert('Format 1 is not supported!');
               break;
-            case 2:
+            }
+            case 2: {
               alert('Format 2 is not supported!');
               return;
-            default:
+            }
+            default: {
+            }
           }
         };
         reader.onabort = (event) => {
