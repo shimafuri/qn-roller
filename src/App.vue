@@ -98,8 +98,8 @@
                     <template v-for="pitch in pitches">
                       <div :class="{
                         'pianoroll-key': true,
-                        'scale-tone': int.scale && int.scale.includes(pitch % 12),
-                        'non-scale-tone': int.scale && !int.scale.includes(pitch % 12),
+                        'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
+                        'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
                         }" :style="{
                         'width': '100%',
                         'height': pitchHeight + 'px',
