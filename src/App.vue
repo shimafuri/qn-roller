@@ -161,7 +161,7 @@ export default {
       scaleIntervals: [
         {
           duration: 1920 * 4, // 4 bars
-          scale: [9, 11, 0, 2, 4, 5, 7], // A minor
+          scale: null, // empty interval
           chordIntervals: (() => {
             let arr = [];
             for (let i = 0 ; i < 2 ; i++) {
@@ -268,6 +268,7 @@ export default {
           chordIntervals: [
             {
               localOffset: 0,
+              duration: 1920 * 7.5,
               notes: [],
             },
           ],
@@ -275,7 +276,13 @@ export default {
         {
           duration: 1920 * 4,
           scale: [9, 11, 0, 2, 4, 5, 7], // A minor
-          chordIntervals: [],
+          chordIntervals: [
+            {
+              localOffset: 0,
+              duration: 1920 * 4,
+              notes: [],
+            },
+          ],
         },
       ],
     };
