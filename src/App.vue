@@ -494,9 +494,17 @@ export default {
               'box-sizing': 'border-box',
               'border': '1px black solid',
               'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
+              'padding-left': '4px',
               'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
+              'font-size': '10px',
+              'overflow': 'hidden',
+              'color': 'white',
+              'text-align': 'left',
           }">
+          <template v-if="true">
+            {{['♭III', '♭III♯', 'IV', 'IV♯', 'V', '♭VI', '♭VI♯', '♭VII', '♭VII♯', 'I', 'I♯', 'II'][note.pitch % 12]}}
+          </template>
         </div>
       `,
       data() {
