@@ -24,6 +24,20 @@ module.exports = {
   },
   // add your custom rules here
   rules: {
+    'max-len': 'off',
+    'no-cond-assign': 'off',
+    'no-empty': 'off',
+    'no-lonely-if': 'off',
+    'no-mixed-operators': 'off',
+    'no-param-reassign': 'off',
+    'no-plusplus': 'off',
+    'no-unused-vars': 'off',
+    'no-useless-return': 'off',
+    'object-shorthand': 'off',
+    'quote-props': 'off',
+    'semi-spacing': 'off',
+    'space-infix-ops': 'off',
+    'spaced-comment': 'off',
     // don't require .vue extension when importing
     'import/extensions': ['error', 'always', {
       js: 'never',
@@ -31,14 +45,14 @@ module.exports = {
     }],
     // disallow reassignment of function parameters
     // disallow parameter object manipulation except for specific exclusions
-    'no-param-reassign': ['error', {
-      props: true,
-      ignorePropertyModificationsFor: [
-        'state', // for vuex state
-        'acc', // for reduce accumulators
-        'e' // for e.returnvalue
-      ]
-    }],
+    // 'no-param-reassign': ['error', {
+    //   props: true,
+    //   ignorePropertyModificationsFor: [
+    //     'state', // for vuex state
+    //     'acc', // for reduce accumulators
+    //     'e' // for e.returnvalue
+    //   ]
+    // }],
     // allow optionalDependencies
     'import/no-extraneous-dependencies': ['error', {
       optionalDependencies: ['test/unit/index.js']
