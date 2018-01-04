@@ -16,7 +16,7 @@
           <div :style="{
               'display': 'flex',
               'flex-flow': 'row nowrap',
-              'width': '2000px',
+              'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': '32px',
               'background-color': 'rgb(42, 45, 49)',
               }">
@@ -64,7 +64,7 @@
               'display': 'flex',
               'flex-flow': 'row nowrap',
               'position': 'relative',
-              'width': '2000px',
+              'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': (pitches.length * pitchHeight) + 'px',
               }">
             <template v-for="int in scaleIntervals">
@@ -284,6 +284,13 @@ export default {
         pitches.unshift(i);
       }
       return pitches;
+    },
+    totalDuration() {
+      let totalDuration = 0;
+      for (const int of this.scaleIntervals) {
+        totalDuration += int.duration;
+      }
+      return totalDuration;
     },
   },
   methods: {
