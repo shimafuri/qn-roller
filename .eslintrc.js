@@ -34,6 +34,7 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-useless-return': 'off',
     'object-shorthand': 'off',
+    'prefer-const': 'off',
     'quote-props': 'off',
     'semi-spacing': 'off',
     'space-infix-ops': 'off',

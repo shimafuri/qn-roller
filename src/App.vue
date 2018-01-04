@@ -21,18 +21,7 @@
               'background-color': 'rgb(42, 45, 49)',
               }">
             <template v-for="int in scaleIntervals">
-              <div :style="{
-                'visibility': (int.scale != null ? 'visible' : 'hidden'),
-                'box-sizing': 'border-box',
-                'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
-                'height': '16px',
-                'background-color': 'white',
-                'box-shadow': 'inset 0 0 2px black',
-                'text-align': 'left',
-                'font-size': '10px',
-                }">
-                {{JSON.stringify(int.scale)}}
-              </div>
+              <scale-interval-indicator :scale-interval="int" />
             </template>
           </div>
         </div>
@@ -145,6 +134,19 @@ import * as MIDIEvents from 'midievents';
 
 const global = {
   barWidth: 128,
+  granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
+};
+const getPageXY = (element) => {
+  let xPosition = 0;
+  let yPosition = 0;
+
+  while (element) {
+    xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+    yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+    element = element.offsetParent;
+  }
+
+  return { x: xPosition, y: yPosition };
 };
 
 export default {
@@ -157,7 +159,6 @@ export default {
       pitchMax: 127,
       pitchMin: 0,
       pitchHeight: 16,
-      granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
       scaleIntervals: [
         {
           duration: 1920 * 4, // 4 bars
@@ -525,6 +526,116 @@ export default {
       },
       props: ['note'],
     },
+    'scale-interval-indicator': {
+      template: `
+        <div :style="{
+                'position': 'relative',
+                'width': ((scaleInterval.duration / 1920.0) * global.barWidth) + 'px',
+                'height': '16px',
+              }"
+              @mousedown="onMouseDown">
+          <div v-show="scaleInterval.scale != null"
+               :style="{
+                  'position': 'absolute',
+                  'box-sizing': 'border-box',
+                  'width': '100%',
+                  'height': '100%',
+                  'background-color': 'white',
+                  'box-shadow': 'inset 0 0 2px black',
+                  'text-align': 'left',
+                  'font-size': '10px',
+                  }">
+            {{JSON.stringify(scaleInterval.scale)}}
+          </div>
+          <div v-show="inputting"
+               :style="{
+                  'position': 'absolute',
+                  'left': ((newIntervalLocalOffset / 1920.0) * global.barWidth) + 'px',
+                  'width': ((newIntervalDuration / 1920.0) * global.barWidth) + 'px',
+                  'height': '100%',
+                  'background-color': 'white',
+                  'box-shadow': 'inset 0 0 2px black',
+                  'pointer-events': 'none',
+                  }">
+          </div>
+        </div>
+      `,
+      data() {
+        return {
+          global: global,
+          headerPane: null, // to be assigned
+          inputting: false,
+          newIntervalLocalOffset: null,
+          newIntervalDuration: null,
+        };
+      },
+      props: ['scaleInterval'],
+      methods: {
+        onMouseDown: function ($event) {
+          if (this.scaleInterval.scale != null) { return; } // Able to add a new scale interval only if this scale interval is empty
+
+          // console.log('mousedown');
+          // console.log(this.headerPane.scrollLeft);
+          // console.log($event.pageX);
+          // console.log(getPageXY(this.$el).x);
+          this.inputting = true;
+
+          const updateNewIntervalDuration = (eventPageX) => {
+            this.newIntervalDuration = Math.round(((((this.headerPane.scrollLeft + eventPageX) - getPageXY(this.$el).x)+1) / this.$el.offsetWidth) * this.scaleInterval.duration) - this.newIntervalLocalOffset;
+            // console.log(this.newIntervalDuration);
+            if (this.newIntervalDuration < (true ? global.granularity : 0)) { // Lower boundary clipping
+              this.newIntervalDuration = (true ? global.granularity : 0);
+            } else if (this.newIntervalLocalOffset + this.newIntervalDuration > this.scaleInterval.duration) { // Higher boundary clipping
+              this.newIntervalDuration = this.scaleInterval.duration - this.newIntervalLocalOffset;
+            }
+            // console.log(this.newIntervalDuration);
+            if (true) { // Align the duration based on the granularity
+              if ((this.newIntervalDuration % global.granularity) !== 0) {
+                this.newIntervalDuration = this.newIntervalDuration - (this.newIntervalDuration % global.granularity) + global.granularity;
+              }
+            }
+            // console.log(this.newIntervalDuration);
+          };
+          this.newIntervalLocalOffset = Math.round((((this.headerPane.scrollLeft + $event.pageX) - getPageXY(this.$el).x) / this.$el.offsetWidth) * this.scaleInterval.duration);
+          // console.log(this.newIntervalLocalOffset);
+          if (true) { // Align the local offset based on the granularity
+            this.newIntervalLocalOffset = this.newIntervalLocalOffset - (this.newIntervalLocalOffset % global.granularity);
+          }
+          // console.log(this.newIntervalLocalOffset);
+          updateNewIntervalDuration($event.pageX);
+
+          // console.log(this.newIntervalLocalOffset);
+          // console.log(this.newIntervalDuration);
+
+          let onMouseMove;
+          let onMouseUp;
+          onMouseMove = (event) => {
+            // console.log('mousemove');
+            // console.log(event.pageX);
+            // console.log(getPageXY(this.$el).x);
+            updateNewIntervalDuration(event.pageX);
+          };
+          onMouseUp = (event) => {
+            this.inputting = false;
+            this.newIntervalLocalOffset = null;
+            this.newIntervalDuration = null;
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+          };
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+        },
+      },
+      mounted() {
+        try {
+          // Note: :header-pane="$refs.headerPane" did not work
+          this.headerPane = this.$parent.$refs.headerPane || this.$parent.$parent.$refs.headerPane || this.$parent.$parent.$parent.$refs.headerPane;
+        } catch (e) {
+          console.error('Header pane is not found!');
+          throw e;
+        }
+      },
+    },
   },
 };
 </script>
@@ -543,6 +654,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  user-select: none;
 }
 
 .no-scrollbar {
