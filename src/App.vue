@@ -421,7 +421,7 @@ export default {
               this.scaleIntervals.push(
                 {
                   duration: tick,
-                  scale: [9, 11, 0, 2, 4, 5, 7],
+                  scale: null,
                   chordIntervals: [
                     {
                       localOffset: 0,
