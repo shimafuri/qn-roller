@@ -169,7 +169,7 @@ export default {
               arr = arr.concat(
                 [
                   {
-                    localOffset: 0,
+                    localOffset: 3840*i + 0,
                     duration: 960,
                     notes: [
                       {
@@ -190,7 +190,7 @@ export default {
                     ],
                   },
                   {
-                    localOffset: 960,
+                    localOffset: 3840*i + 960,
                     duration: 960,
                     notes: [
                       {
@@ -216,7 +216,7 @@ export default {
                     ],
                   },
                   {
-                    localOffset: 960 * 2,
+                    localOffset: 3840*i + 960 * 2,
                     duration: 960,
                     notes: [
                       {
@@ -237,7 +237,7 @@ export default {
                     ],
                   },
                   {
-                    localOffset: 960 * 3,
+                    localOffset: 3840*i + 960 * 3,
                     duration: 960,
                     notes: [
                       {
@@ -262,17 +262,6 @@ export default {
             }
             return arr;
           })(),
-        },
-        {
-          duration: 1920 * 7.5,
-          scale: null,
-          chordIntervals: [
-            {
-              localOffset: 0,
-              duration: 1920 * 7.5,
-              notes: [],
-            },
-          ],
         },
         {
           duration: 1920 * 4,
