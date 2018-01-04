@@ -21,7 +21,7 @@
               'background-color': 'rgb(42, 45, 49)',
               }">
             <template v-for="int in scaleIntervals">
-              <scale-interval-indicator :scale-interval="int" />
+              <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" />
             </template>
           </div>
         </div>
@@ -492,6 +492,156 @@ export default {
         this.$refs.pitchesPane.scrollTop = $event.target.scrollTop;
       }
     },
+    onNewScaleInterval(baseScaleInterval, localOffset, duration) {
+      // console.log(`onNewScaleInterval`);
+      // console.log(`scale duration: ${baseScaleInterval.duration} - localOffset: ${localOffset} - duration: ${duration}`);
+      let baseScaleIntervalIndex = this.scaleIntervals.findIndex(v => v === baseScaleInterval);
+
+      Array.prototype.splice.apply(
+        this.scaleIntervals,
+        [
+          baseScaleIntervalIndex,
+          1,
+          ...this.divideScaleInterval(this.scaleIntervals[baseScaleIntervalIndex], localOffset + duration, [9, 11, 0, 2, 4, 5, 7], null),
+        ],
+      );
+      Array.prototype.splice.apply(
+        this.scaleIntervals,
+        [
+          baseScaleIntervalIndex,
+          1,
+          ...this.divideScaleInterval(this.scaleIntervals[baseScaleIntervalIndex], localOffset, null, [9, 11, 0, 2, 4, 5, 7]),
+        ],
+      );
+      this.$forceUpdate();
+    },
+    /**
+     * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
+     * Allocates the chord intervals among the two scale intervals as needed.
+     *
+     * @return The two intervals
+     */
+    divideScaleInterval(baseScaleInterval, boundaryOffset, scaleA, scaleB) {
+      // console.log(`divideScaleInterval`);
+      // console.log(`scale duration: ${baseScaleInterval.duration} - boundaryOffset: ${boundaryOffset}`);
+      if (boundaryOffset === baseScaleInterval.duration) {
+        return [
+          {
+            duration: baseScaleInterval.duration,
+            scale: scaleA,
+            chordIntervals: baseScaleInterval.chordIntervals,
+          },
+        ];
+      }
+      if (boundaryOffset === 0) {
+        return [
+          {
+            duration: baseScaleInterval.duration,
+            scale: scaleB,
+            chordIntervals: baseScaleInterval.chordIntervals,
+          },
+        ];
+      }
+
+      const newScaleIntervalA = {
+        duration: boundaryOffset, // Range: [0, boundaryOffset]
+        scale: scaleA,
+        chordIntervals: [], // to be assigned
+      };
+      const newScaleIntervalB = {
+        duration: baseScaleInterval.duration - boundaryOffset, // Range: [boundaryOffset, duration]
+        scale: scaleB,
+        chordIntervals: [], // to be assigned
+      };
+
+      // Search for a chord interval which should be divided
+      let needsDivision = false;
+      let targetIndex = null;
+      for (let i = 0 ; i < baseScaleInterval.chordIntervals.length ; i++) {
+        const currenttChordInterval = baseScaleInterval.chordIntervals[i];
+
+        if (i === baseScaleInterval.chordIntervals.length-1) {
+          // If no chord intervals start after boundaryOffset, the final chord interval should be divided
+          needsDivision = true;
+          targetIndex = i;
+          break;
+        } else if (i < baseScaleInterval.chordIntervals.length-1) {
+          const nextChordInterval = baseScaleInterval.chordIntervals[i+1];
+          if (nextChordInterval.localOffset === boundaryOffset) {
+            // If the next chord interval starts at boundaryOffset, there is no chord interval which should be divided
+            needsDivision = false;
+            targetIndex = i; // first chord interval of the scale interval A
+            break;
+          } else if (nextChordInterval.localOffset > boundaryOffset) {
+            // If the next chord interval start after boundaryOffset, the current chord interval should be divided
+            needsDivision = true;
+            targetIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Allocate (and modify) the chord intervals among the two scale intervals
+      for (let i = 0 ; i <= targetIndex-1 ; i++) {
+        newScaleIntervalA.chordIntervals.push(baseScaleInterval.chordIntervals[i]);
+      }
+      {
+        const targetChordInterval = baseScaleInterval.chordIntervals[targetIndex];
+        if (needsDivision) {
+          const [newChordIntervalA, newChordIntervalB] = this.divideChordInterval(
+            baseScaleInterval.chordIntervals[targetIndex],
+            boundaryOffset - targetChordInterval.localOffset, // Calcurate inner boundaryOffset for the target chord interval
+            targetChordInterval.chord,
+            targetChordInterval.chord,
+          );
+          newChordIntervalB.localOffset -= boundaryOffset; // Update the origin of localOffset to the scale interval B
+          newScaleIntervalA.chordIntervals.push(newChordIntervalA);
+          newScaleIntervalB.chordIntervals.push(newChordIntervalB);
+        } else {
+          // If no division is needed, targetIndex points to the first chord interval of the scale interval A
+          newScaleIntervalA.chordIntervals.push(targetChordInterval);
+        }
+      }
+      for (let i = targetIndex+1 ; i < baseScaleInterval.chordIntervals.length ; i++) {
+        baseScaleInterval.chordIntervals[i].localOffset -= boundaryOffset; // Update the origin of localOffset to the scale interval B
+        newScaleIntervalB.chordIntervals.push(baseScaleInterval.chordIntervals[i]);
+      }
+
+      return [newScaleIntervalA, newScaleIntervalB];
+    },
+    /**
+     * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
+     * Splits the chord intervals as needed.
+     */
+    divideChordInterval(oldChordInterval, boundaryOffset, chordA, chordB) {
+      // console.log(`divideChordInterval`);
+      // console.log(`chord localOffset: ${oldChordInterval.localOffset} - chord duration: ${oldChordInterval.duration} - boundaryOffset: ${boundaryOffset}`);
+      const newChordIntervalA = {
+        localOffset: oldChordInterval.localOffset,
+        duration: boundaryOffset, // Range: [0, boundaryOffset]
+        chord: chordA,
+        notes: [], // to be assigned
+      };
+      const newChordIntervalB = {
+        localOffset: oldChordInterval.localOffset + boundaryOffset,
+        duration: oldChordInterval.duration - boundaryOffset, // Range: [boundaryOffset, duration]
+        chord: chordB,
+        notes: [], // to be assigned
+      };
+
+      // Allocate (and modify) the notes among the two chord intervals
+      for (let i = 0 ; i < oldChordInterval.notes.length ; i++) {
+        const note = oldChordInterval.notes[i];
+        if (note.localOffset < boundaryOffset) {
+          newChordIntervalA.notes.push(note);
+        } else {
+          note.localOffset -= boundaryOffset;
+          newChordIntervalB.notes.push(note);
+        }
+      }
+
+      return [newChordIntervalA, newChordIntervalB];
+    },
   },
   components: {
     'note': {
@@ -509,6 +659,7 @@ export default {
               'overflow': 'hidden',
               'color': 'white',
               'text-align': 'left',
+              'z-index': '1',
           }">
           <template v-if="true">
             {{['♭III', '♭III♯', 'IV', 'IV♯', 'V', '♭VI', '♭VI♯', '♭VII', '♭VII♯', 'I', 'I♯', 'II'][note.pitch % 12]}}
@@ -612,11 +763,13 @@ export default {
             updateNewIntervalDuration(event.pageX);
           };
           onMouseUp = (event) => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+
+            this.$emit('new-scale-interval', this.scaleInterval, this.newIntervalLocalOffset, this.newIntervalDuration);
             this.inputting = false;
             this.newIntervalLocalOffset = null;
             this.newIntervalDuration = null;
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
           };
           window.addEventListener('mousemove', onMouseMove);
           window.addEventListener('mouseup', onMouseUp);
