@@ -24,6 +24,7 @@
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': '32px',
               'background-color': 'rgb(42, 45, 49)',
+              'transform': 'translate3d(0, 0, 0)',
               }">
             <template v-for="int in scaleIntervals">
               <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" />
@@ -47,6 +48,7 @@
                 'width': '100%',
                 'height': (pitches.length * pitchHeight) + 'px',
                 'background-color': 'rgb(240, 242, 243)',
+                'transform': 'translate3d(0, 0, 0)',
                 }">
               <template v-for="pitch in pitches">
                 <div :style="{
@@ -79,6 +81,7 @@
               'position': 'relative',
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': (pitches.length * pitchHeight) + 'px',
+              'transform': 'translate3d(0, 0, 0)',
               }">
             <!-- Scale intervals -->
             <template v-for="int in scaleIntervals">
