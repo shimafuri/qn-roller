@@ -6,13 +6,18 @@
     style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;"
     @dragover="onDragOver($event)"
     @drop="onDrop($event)">
+    <!-- Top part -->
     <div style="height: 32px;">
+      <!-- Left/Right divider -->
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
+        <!-- Left side -->
         <div style="width: 64px; background-color: rgb(39, 42, 45);">
           <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
         </div>
+        <!-- Right side (horizontally scrollable) -->
         <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
             @scroll="onScroll_headerPane($event)">
+          <!-- Content -->
           <div :style="{
               'display': 'flex',
               'flex-flow': 'row nowrap',
@@ -27,11 +32,16 @@
         </div>
       </div>
     </div>
+    <!-- Bottom part -->
     <div style="flex: 1; height: 0;">
+      <!-- Left/Right divider -->
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
+        <!-- Left side -->
         <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
+          <!-- Content viewport (vertically scrollable) -->
           <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
             @scroll="onScroll_pitchesPane($event)">
+            <!-- Content -->
             <div
               :style="{
                 'width': '100%',
@@ -55,11 +65,14 @@
               </template>
             </div>
           </div>
+          <!-- Content viewport border -->
           <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
         </div>
+        <!-- Right side -->
         <div ref="notesPane"
              style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
              @scroll="onScroll_notesPane($event)">
+          <!-- Content -->
           <div :style="{
               'display': 'flex',
               'flex-flow': 'row nowrap',
@@ -67,6 +80,7 @@
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': (pitches.length * pitchHeight) + 'px',
               }">
+            <!-- Scale intervals -->
             <template v-for="int in scaleIntervals">
               <div :style="{
                 'display': 'flex',
@@ -76,6 +90,7 @@
                 'height': '100%',
                 'box-shadow': 'inset 0 0 2px black',
                 }">
+                <!-- Chord intervals -->
                 <template v-for="chd in int.chordIntervals">
                   <div :style="{
                     'display': 'flex',
@@ -84,6 +99,7 @@
                     'height': '100%',
                     'box-shadow': 'inset 0 0 2px red',
                     }">
+                    <!-- Pitch row wrappers -->
                     <template v-for="pitch in pitches">
                       <div :class="{
                         'pianoroll-key': true,
@@ -93,6 +109,7 @@
                         'width': '100%',
                         'height': pitchHeight + 'px',
                         }">
+                        <!-- Pitch row -->
                         <div :class="{
                           'pianoroll-key-inner': true,
                           }" :style="{
@@ -100,6 +117,7 @@
                           'width': '100%',
                           'height': '100%',
                           }">
+                          <!-- Notes -->
                           <template v-for="note in chd.notes">
                             <note v-if="note.pitch === pitch" :note="note" />
                           </template>
@@ -691,7 +709,7 @@ export default {
                   'box-shadow': 'inset 0 0 2px black',
                   'text-align': 'left',
                   'font-size': '10px',
-                  }">
+                }">
             {{JSON.stringify(scaleInterval.scale)}}
           </div>
           <div v-show="inputting"
