@@ -26,6 +26,7 @@
               'background-color': 'rgb(42, 45, 49)',
               'transform': 'translate3d(0, 0, 0)',
               }">
+            <!-- Scale interval indicators -->
             <template v-for="int in scaleIntervals">
               <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" />
             </template>
