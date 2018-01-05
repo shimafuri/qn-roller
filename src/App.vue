@@ -106,7 +106,7 @@
                     <!-- Pitch row wrappers -->
                     <template v-for="pitch in pitches">
                       <div :class="{
-                        'pianoroll-key': true,
+                        'pitch-row': true,
                         'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
                         'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
                         }" :style="{
@@ -115,7 +115,7 @@
                         }">
                         <!-- Pitch row -->
                         <div :class="{
-                          'pianoroll-key-inner': true,
+                          'pitch-row-inner': true,
                           }" :style="{
                           'position': 'relative',
                           'width': '100%',
@@ -863,84 +863,84 @@ html, body {
   height: 0 !important;
 }
 
-.pianoroll-key {
+.pitch-row {
   overflow: visible;
 }
 
-.pianoroll-key > .pianoroll-key-inner {
+.pitch-row > .pitch-row-inner {
   overflow: visible;
 }
 
-.pianoroll-key.scale-tone > .pianoroll-key-inner {
+.pitch-row.scale-tone > .pitch-row-inner {
   background-color: rgb(42, 45, 49);
 }
 
-.pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+.pitch-row.non-scale-tone > .pitch-row-inner {
   background-color: rgb(35, 37, 39);
 }
 
-.pianoroll-key.scale-tone .note {
+.pitch-row.scale-tone .note {
   background-color: rgb(62, 137, 155);
 }
 
-.pianoroll-key.non-scale-tone .note {
+.pitch-row.non-scale-tone .note {
   background-color: rgb(247, 31, 31);
 }
 
-.pianoroll-key.non-scale-tone {
+.pitch-row.non-scale-tone {
   transition: height 0.5s ease-in-out;
 }
-#app:not(.flag-collapse) .pianoroll-key.non-scale-tone {
+#app:not(.flag-collapse) .pitch-row.non-scale-tone {
 }
-#app.flag-collapse .pianoroll-key.non-scale-tone {
+#app.flag-collapse .pitch-row.non-scale-tone {
   height: 0 !important;
 }
-.pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+.pitch-row.non-scale-tone > .pitch-row-inner {
   position: relative;
   transition: top 0.5s ease-in-out, height 0.5s ease-in-out;
 }
-#app:not(.flag-collapse) .pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+#app:not(.flag-collapse) .pitch-row.non-scale-tone > .pitch-row-inner {
   top: 0;
 }
-#app.flag-collapse .pianoroll-key.non-scale-tone > .pianoroll-key-inner {
+#app.flag-collapse .pitch-row.non-scale-tone > .pitch-row-inner {
   top: -2px;
   height: 4px !important;
 }
-.pianoroll-key.non-scale-tone .note {
+.pitch-row.non-scale-tone .note {
   transition: border-radius 0.5s ease-in-out;
 }
-#app:not(.flag-collapse) .pianoroll-key.non-scale-tone .note {
+#app:not(.flag-collapse) .pitch-row.non-scale-tone .note {
   border-radius: 0px;
 }
-#app.flag-collapse .pianoroll-key.non-scale-tone .note {
+#app.flag-collapse .pitch-row.non-scale-tone .note {
   border-radius: 16px;
 }
 
-.pianoroll-key.scale-tone > .pianoroll-key-inner {
+.pitch-row.scale-tone > .pitch-row-inner {
   background-color: rgb(42, 45, 49);
   transition: box-shadow 0.5s ease-in-out;
 }
-#app:not(.flag-collapse) .pianoroll-key.non-scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.non-scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.non-scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone > .pianoroll-key-inner {
+#app:not(.flag-collapse) .pitch-row.non-scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.non-scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.non-scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.scale-tone > .pitch-row-inner {
   box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
 }
-#app:not(.flag-collapse) .pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.non-scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.non-scale-tone +
-.pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone > .pianoroll-key-inner {
+#app:not(.flag-collapse) .pitch-row.scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.non-scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.non-scale-tone +
+.pitch-row.scale-tone +
+.pitch-row.scale-tone > .pitch-row-inner {
   box-shadow: inset 0px 1px 0px rgb(24, 25, 27);
 }
 #app.flag-collapse 
-.pianoroll-key.scale-tone +
-.pianoroll-key.scale-tone > .pianoroll-key-inner {
+.pitch-row.scale-tone +
+.pitch-row.scale-tone > .pitch-row-inner {
   box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
 }
 
