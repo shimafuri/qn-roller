@@ -83,6 +83,7 @@
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
               'height': (pitches.length * pitchHeight) + 'px',
               'transform': 'translate3d(0, 0, 0)',
+              'transform-style': 'preserve-3d',
               }">
             <!-- Scale intervals -->
             <template v-for="int in scaleIntervals">
@@ -97,11 +98,13 @@
                 <!-- Chord intervals -->
                 <template v-for="chd in int.chordIntervals">
                   <div :style="{
+                    'position': 'relative',
                     'display': 'flex',
                     'flex-flow': 'column nowrap',
                     'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                     'height': '100%',
                     'box-shadow': 'inset 0 0 2px red',
+                    'transform-style': 'preserve-3d',
                     }">
                     <!-- Pitch row wrappers -->
                     <template v-for="pitch in pitches">
@@ -110,8 +113,11 @@
                         'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
                         'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
                         }" :style="{
+                        'position': 'absolute',
                         'width': '100%',
                         'height': pitchHeight + 'px',
+                        'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                        'transform-style': 'preserve-3d',
                         }">
                         <!-- Pitch row -->
                         <div :class="{
@@ -120,6 +126,7 @@
                           'position': 'relative',
                           'width': '100%',
                           'height': '100%',
+                          'transform-style': 'preserve-3d',
                           }">
                           <!-- Notes -->
                           <template v-for="note in chd.notes">
@@ -673,6 +680,7 @@ export default {
               'position': 'absolute',
               'box-sizing': 'border-box',
               'border': '1px black solid',
+              'top': '0',
               'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
               'padding-left': '4px',
               'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
@@ -681,7 +689,7 @@ export default {
               'overflow': 'hidden',
               'color': 'white',
               'text-align': 'left',
-              'z-index': '1',
+              'transform': 'translateZ(100px)',
           }">
           <template v-if="true">
             {{['♭III', '♭III♯', 'IV', 'IV♯', 'V', '♭VI', '♭VI♯', '♭VII', '♭VII♯', 'I', 'I♯', 'II'][note.pitch % 12]}}
