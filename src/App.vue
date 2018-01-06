@@ -385,7 +385,7 @@ export default {
       return retval;
     },
     onWheel($event) {
-      console.log($event);
+      // console.log($event);
       if ($event.ctrlKey) {
         if ($event.shiftKey) {
           if ($event.deltaY !== 0) { // Horizontal zoom
