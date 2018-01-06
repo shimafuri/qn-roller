@@ -836,6 +836,9 @@ export default {
       template: `
         <div class="note"
               :style="{
+              'display': 'flex',
+              'align-items': 'center',
+              'white-space': 'nowrap',
               'position': 'absolute',
               'box-sizing': 'border-box',
               'border': '1px black solid',
