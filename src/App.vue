@@ -7,7 +7,7 @@
     @dragover="onDragOver($event)"
     @drop="onDrop($event)">
     <!-- Top part -->
-    <div style="height: 32px;">
+    <div style="height: 48px;">
       <!-- Left/Right divider -->
       <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
         <!-- Left side -->
@@ -22,7 +22,7 @@
               'display': 'flex',
               'flex-flow': 'row nowrap',
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-              'height': '32px',
+              'height': '24px',
               'background-color': 'rgb(42, 45, 49)',
               'transform': 'translate3d(0, 0, 0)',
               }">
@@ -708,19 +708,22 @@ export default {
         <div :style="{
                 'position': 'relative',
                 'width': ((scaleInterval.duration / 1920.0) * global.barWidth) + 'px',
-                'height': '16px',
+                'height': '100%',
               }"
               @mousedown="onMouseDown">
           <div v-show="scaleInterval.scale != null"
                :style="{
+                  'display': 'flex',
+                  'align-items': 'center',
                   'position': 'absolute',
                   'box-sizing': 'border-box',
+                  'padding-left': '6px',
                   'width': '100%',
                   'height': '100%',
                   'background-color': 'white',
                   'box-shadow': 'inset 0 0 2px black',
-                  'text-align': 'left',
-                  'font-size': '10px',
+                  'font-size': '14px',
+                  'font-weight': 'bold',
                 }"
                 @wheel="onWheel">
             {{JSON.stringify(scaleInterval.scale)}}
