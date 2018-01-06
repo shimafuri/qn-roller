@@ -131,7 +131,7 @@
                           }">
                           <!-- Notes -->
                           <template v-for="note in chd.notes">
-                            <note v-if="note.pitch === pitch" :note="note" />
+                            <note v-if="note.pitch === pitch" :scale-interval="int" :note="note" />
                           </template>
                         </div>
                       </div>
@@ -212,6 +212,23 @@ const global = {
       case 10: return ['A#', 'Bb'];
       case 11: return ['B'];
       default: throw new Error('Valid range of pitch class is 0-11.');
+    }
+  },
+  getDegreeLabels(originalScale, pitchClass) {
+    if (originalScale == null) { throw new Error(`Invalid scale: ${JSON.stringify(originalScale)}`); }
+
+    let normalizedScale;
+    normalizedScale = JSON.parse(JSON.stringify(originalScale)); // Prevent destructive updating
+    normalizedScale = normalizedScale.map(v => ((v - originalScale[0])+12)%12); // [9, 11, 0, 2, 4, 5, 7] -> [0, 2, 3, 5, 7, 8, 10]
+    const normalizedPitchClass = ((pitchClass - originalScale[0])+12)%12;
+
+    switch (JSON.stringify(normalizedScale)) {
+      case JSON.stringify([0, 2, 4, 5, 7, 9, 11]): // Major scale
+        return [['I'], ['♯I', '♭II'], ['II'], ['♭III'], ['III'], ['IV'], ['♯IV', '♭V'], ['V'], ['♭VI'], ['VI'], ['♭VII'], ['VII']][normalizedPitchClass];
+      case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
+        return [['I'], ['♯I', '♭II'], ['II'], ['♭III'], ['III'], ['IV'], ['♯IV', '♭V'], ['V'], ['♭VI'], ['VI'], ['♭VII'], ['VII']][normalizedPitchClass];
+      default:
+        return [['I'], ['♯I', '♭II'], ['II'], ['♯II', '♭III'], ['III'], ['IV'], ['♯IV', '♭V'], ['V'], ['♯V', '♭VI'], ['VI'], ['♯VI', '♭VII'], ['VII']][normalizedPitchClass];
     }
   },
 };
@@ -833,8 +850,11 @@ export default {
               'text-align': 'left',
               'transform': 'translateZ(100px)',
           }">
-          <template v-if="true">
-            {{['♭III', '♭III♯', 'IV', 'IV♯', 'V', '♭VI', '♭VI♯', '♭VII', '♭VII♯', 'I', 'I♯', 'II'][note.pitch % 12]}}
+          <template v-if="scaleInterval.scale != null">
+            {{global.getDegreeLabels(scaleInterval.scale, note.pitch % 12).join(' or ')}}
+          </template>
+          <template v-else>
+            {{global.getNoteNames(note.pitch % 12).join(' or ')}}
           </template>
         </div>
       `,
@@ -843,7 +863,7 @@ export default {
           global: global,
         };
       },
-      props: ['note'],
+      props: ['scaleInterval', 'note'],
     },
     'scale-interval-indicator': {
       template: `
