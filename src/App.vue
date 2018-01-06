@@ -380,6 +380,17 @@ export default {
     },
   },
   methods: {
+    rerender() {
+      const rec = (component) => {
+        component.$forceUpdate();
+        if (component.$children.length > 0) {
+          for (let i = 0 ; i < component.$children.length ; i++) {
+            rec(component.$children[i]);
+          }
+        }
+      };
+      rec(this);
+    },
     /**
      * Divides the specified duration into several durations based on the specified unit.
      * 
@@ -673,7 +684,7 @@ export default {
           ...this.divideScaleInterval(this.scaleIntervals[baseScaleIntervalIndex], localOffset, null, [9, 11, 0, 2, 4, 5, 7]),
         ],
       );
-      this.$forceUpdate();
+      this.rerender();
     },
     /**
      * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
@@ -971,8 +982,7 @@ export default {
           } else {
             return; // Horizontal wheel input is not supported
           }
-          this.$parent.$forceUpdate();
-          this.$forceUpdate();
+          (this.$parent.rerender || this.$parent.$parent.rerender || this.$parent.$parent.$parent.rerender)();
         },
       },
       mounted() {
