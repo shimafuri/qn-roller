@@ -721,7 +721,8 @@ export default {
                   'box-shadow': 'inset 0 0 2px black',
                   'text-align': 'left',
                   'font-size': '10px',
-                }">
+                }"
+                @wheel="onWheel">
             {{JSON.stringify(scaleInterval.scale)}}
           </div>
           <div v-show="inputting"
@@ -803,6 +804,17 @@ export default {
           };
           window.addEventListener('mousemove', onMouseMove);
           window.addEventListener('mouseup', onMouseUp);
+        },
+        onWheel: function ($event) {
+          if ($event.deltaY > 0) {
+            this.scaleInterval.scale = this.scaleInterval.scale.map(v => (v+11) % 12);
+          } else if ($event.deltaY < 0) {
+            this.scaleInterval.scale = this.scaleInterval.scale.map(v => (v+1) % 12);
+          } else {
+            return; // Horizontal wheel input is not supported
+          }
+          this.$parent.$forceUpdate();
+          this.$forceUpdate();
         },
       },
       mounted() {
