@@ -22,7 +22,7 @@
               'display': 'flex',
               'flex-flow': 'row nowrap',
               'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-              'height': '24px',
+              'height': '48px',
               'background-color': 'rgb(42, 45, 49)',
               'transform': 'translate3d(0, 0, 0)',
               }">
@@ -709,17 +709,27 @@ export default {
                 'position': 'relative',
                 'width': ((scaleInterval.duration / 1920.0) * global.barWidth) + 'px',
                 'height': '100%',
-              }"
-              @mousedown="onMouseDown">
+              }">
+          <div :style="{
+                  'position': 'absolute',
+                  'top': '0',
+                  'left': '0',
+                  'width': '100%',
+                  'height': '24px',
+                }"
+                @mousedown="onMouseDown">
+          </div>
           <div v-show="scaleInterval.scale != null"
                :style="{
                   'display': 'flex',
                   'align-items': 'center',
                   'position': 'absolute',
+                  'top': '0',
+                  'left': '0',
                   'box-sizing': 'border-box',
                   'padding-left': '6px',
                   'width': '100%',
-                  'height': '100%',
+                  'height': '24px',
                   'background-color': 'white',
                   'box-shadow': 'inset 0 0 2px black',
                   'font-size': '14px',
@@ -731,14 +741,26 @@ export default {
           <div v-show="inputting"
                :style="{
                   'position': 'absolute',
+                  'top': '0',
                   'left': ((newIntervalLocalOffset / 1920.0) * global.barWidth) + 'px',
                   'width': ((newIntervalDuration / 1920.0) * global.barWidth) + 'px',
-                  'height': '100%',
+                  'height': '24px',
                   'background-color': 'white',
                   'box-shadow': 'inset 0 0 2px black',
                   'pointer-events': 'none',
                   }">
           </div>
+          <template v-for="chd in scaleInterval.chordIntervals">
+            <div :style="{
+                    'position': 'absolute',
+                    'top': '24px',
+                    'left': ((chd.localOffset / 1920.0) * global.barWidth) + 'px',
+                    'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
+                    'height': '24px',
+                  }">
+              <chord-interval-indicator :chordInterval="chd"/>
+            </div>
+          </template>
         </div>
       `,
       data() {
@@ -828,6 +850,34 @@ export default {
           console.error('Header pane is not found!');
           throw e;
         }
+      },
+      components: {
+        'chord-interval-indicator': {
+          template: `
+            <div v-show="chordInterval.chord != null"
+                :style="{
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'position': 'static',
+                    'box-sizing': 'border-box',
+                    'padding-left': '6px',
+                    'width': '100%',
+                    'height': '100%',
+                    'background-color': 'white',
+                    'box-shadow': 'inset 0 0 2px black',
+                    'font-size': '14px',
+                    'font-weight': 'bold',
+                  }">
+              {{chordInterval.chord === void 0 ? 'undefined' : JSON.stringify(chordInterval.chord)}}
+            </div>
+          `,
+          data() {
+            return {
+              global: global,
+            };
+          },
+          props: ['chordInterval'],
+        },
       },
     },
   },
