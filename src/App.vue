@@ -200,6 +200,7 @@ export default {
                   {
                     localOffset: 3840*i + 0,
                     duration: 960,
+                    chord: [9, 0, 4, 7], // Am7
                     notes: [
                       {
                         localOffset: 0,
@@ -221,6 +222,7 @@ export default {
                   {
                     localOffset: 3840*i + 960,
                     duration: 960,
+                    chord: [5, 9, 0, 4], // FM7
                     notes: [
                       {
                         localOffset: 0,
@@ -247,6 +249,7 @@ export default {
                   {
                     localOffset: 3840*i + 960 * 2,
                     duration: 960,
+                    chord: [7, 11, 2, 5], // G7
                     notes: [
                       {
                         localOffset: 0,
@@ -268,6 +271,7 @@ export default {
                   {
                     localOffset: 3840*i + 960 * 3,
                     duration: 960,
+                    chord: [7, 11, 2, 5], // CM7
                     notes: [
                       {
                         localOffset: 0,
@@ -299,6 +303,7 @@ export default {
             {
               localOffset: 0,
               duration: 1920 * 4,
+              chord: null,
               notes: [],
             },
           ],
@@ -462,6 +467,7 @@ export default {
                     {
                       localOffset: 0,
                       duration: tick,
+                      chord: null,
                       notes: midiNotes,
                     },
                   ],
