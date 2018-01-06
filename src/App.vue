@@ -135,6 +135,18 @@
                         </div>
                       </div>
                     </template>
+                    <!-- Beat indicators -->
+                    <template v-for="beat in divideDuration(chd.duration, 480)">
+                      <div :style="{
+                        'position': 'absolute',
+                        'top': '0',
+                        'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                        'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                        'height': '100%',
+                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 1px, transparent 1px, transparent 100%)`,
+                      }">
+                      </div>
+                    </template>
                   </div>
                 </template>
               </div>
@@ -328,6 +340,45 @@ export default {
     },
   },
   methods: {
+    /**
+     * Divides the specified duration into several durations based on the specified unit.
+     * 
+     * Example
+     *   Input: duration=840, unit=200
+     *   Output: [
+     *     { localOffset: 0, duration: 200 },
+     *     { localOffset: 200, duration: 200 },
+     *     { localOffset: 400, duration: 200 },
+     *     { localOffset: 600, duration: 200 },
+     *     { localOffset: 800, duration: 40 },
+     *   ]
+     *
+     *   Input: duration=800, unit=200
+     *   Output: [
+     *     { localOffset: 0, duration: 200 },
+     *     { localOffset: 200, duration: 200 },
+     *     { localOffset: 400, duration: 200 },
+     *     { localOffset: 600, duration: 200 },
+     *   ]
+     */
+    divideDuration(duration, unit) {
+      // console.log(`divideDuration(duration=${duration}, unit=${unit})`);
+      const retval = [];
+      let tempOffset = 0;
+      for ( ; tempOffset + unit < duration ; tempOffset += unit) {
+        retval.push({
+          localOffset: tempOffset,
+          duration: unit,
+        });
+      }
+      retval.push({
+        localOffset: tempOffset,
+        duration: duration - tempOffset,
+      });
+
+      // console.log(retval);
+      return retval;
+    },
     onDragOver($event) {
       $event.stopPropagation();
       $event.preventDefault(); // default dragover event handler must be canceled to enable drop event
