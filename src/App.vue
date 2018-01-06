@@ -5,7 +5,8 @@
     }"
     style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;"
     @dragover="onDragOver($event)"
-    @drop="onDrop($event)">
+    @drop="onDrop($event)"
+    @wheel="onWheel">
     <!-- Top part -->
     <div style="height: 48px;">
       <!-- Left/Right divider -->
@@ -175,6 +176,8 @@ import * as MIDIEvents from 'midievents';
 
 const global = {
   barWidth: 128,
+  barWidthMin: 4,
+  barWidthMax: 2048,
   granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
 };
 const getPageXY = (element) => {
@@ -200,6 +203,8 @@ export default {
       pitchMax: 127,
       pitchMin: 0,
       pitchHeight: 16,
+      pitchHeightMin: 2,
+      pitchHeightMax: 21,
       scaleIntervals: [
         {
           duration: 1920 * 4, // 4 bars
@@ -378,6 +383,40 @@ export default {
 
       // console.log(retval);
       return retval;
+    },
+    onWheel($event) {
+      console.log($event);
+      if ($event.ctrlKey) {
+        if ($event.shiftKey) {
+          if ($event.deltaY !== 0) { // Horizontal zoom
+            if ($event.deltaY < 0) {
+              if (global.barWidth * 2 <= global.barWidthMax) { // Higher boundary clipping
+                global.barWidth *= 2;
+              }
+            } else if ($event.deltaY > 0) {
+              if (global.barWidth / 2 >= global.barWidthMin) { // Lower boundary clipping
+                global.barWidth /= 2;
+              }
+            }
+          }
+          $event.stopPropagation();
+          $event.preventDefault();
+        } else {
+          if ($event.deltaY !== 0) { // Vertical zoom
+            if ($event.deltaY < 0) {
+              if (this.pitchHeight + 2 <= this.pitchHeightMax) { // Higher boundary clipping
+                this.pitchHeight += 2;
+              }
+            } else if ($event.deltaY > 0) {
+              if (this.pitchHeight - 2 >= this.pitchHeightMin) { // Lower boundary clipping
+                this.pitchHeight -= 2;
+              }
+            }
+          }
+          $event.stopPropagation();
+          $event.preventDefault();
+        }
+      }
     },
     onDragOver($event) {
       $event.stopPropagation();
