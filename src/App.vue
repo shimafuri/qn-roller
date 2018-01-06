@@ -179,6 +179,41 @@ const global = {
   barWidthMin: 4,
   barWidthMax: 2048,
   granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
+  getScaleNames(originalScale) {
+    if (originalScale == null) { throw new Error(`Invalid scale: ${JSON.stringify(originalScale)}`); }
+
+    let normalizedScale;
+    normalizedScale = JSON.parse(JSON.stringify(originalScale)); // Prevent destructive updating
+    normalizedScale = normalizedScale.map(v => ((v - originalScale[0])+12)%12); // [9, 11, 0, 2, 4, 5, 7] -> [0, 2, 3, 5, 7, 8, 10]
+
+    switch (JSON.stringify(normalizedScale)) {
+      case JSON.stringify([0, 2, 4, 5, 7, 9, 11]): // Major scale
+        return global.getNoteNames(originalScale[0]).map(v => `${v} major`);
+      case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
+        return global.getNoteNames(originalScale[0]).map(v => `${v} minor`);
+      default:
+        return `Unknown scale (${originalScale.map(v => v.join('/')).join(', ')})`;
+    }
+  },
+  // This app always shows degree labels if a scale is given.
+  // So there is no need to support all enharmonics of each note, but black keys are supported for absolute note notation.
+  getNoteNames(pitchClass) {
+    switch (pitchClass) {
+      case 0: return ['C'];
+      case 1: return ['C#', 'Db'];
+      case 2: return ['D'];
+      case 3: return ['D#', 'Eb'];
+      case 4: return ['E'];
+      case 5: return ['F'];
+      case 6: return ['F#', 'Gb'];
+      case 7: return ['G'];
+      case 8: return ['G#', 'Ab'];
+      case 9: return ['A'];
+      case 10: return ['A#', 'Bb'];
+      case 11: return ['B'];
+      default: throw new Error('Valid range of pitch class is 0-11.');
+    }
+  },
 };
 const getPageXY = (element) => {
   let xPosition = 0;
@@ -832,7 +867,9 @@ export default {
                   'font-weight': 'bold',
                 }"
                 @wheel="onWheel">
-            {{JSON.stringify(scaleInterval.scale)}}
+            <template v-if="scaleInterval.scale != null">
+              {{global.getScaleNames(scaleInterval.scale).join(' / ')}}
+            </template>
           </div>
           <div v-show="inputting"
                :style="{
