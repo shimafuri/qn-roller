@@ -832,7 +832,7 @@ export default {
               'white-space': 'nowrap',
               'position': 'absolute',
               'box-sizing': 'border-box',
-              'border': (isRoot ? '1px white solid' : '1px black solid'),
+              'border': ((this.scaleInterval.scale == null ? false : (this.chordInterval.chord == null ? false : this.note.pitch % 12 === this.chordInterval.chord[0])) ? '1px white solid' : '1px black solid'),
               'top': '0',
               'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
               'padding-left': '4px',
@@ -856,11 +856,6 @@ export default {
         return {
           global: global,
         };
-      },
-      computed: {
-        isRoot() {
-          return (this.scaleInterval.scale == null ? false : (this.chordInterval.chord == null ? false : this.note.pitch % 12 === this.chordInterval.chord[0]));
-        },
       },
       props: ['scaleInterval', 'chordInterval', 'note'],
     },
