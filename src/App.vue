@@ -152,17 +152,6 @@
                 </template>
               </div>
             </template>
-            <!--<template v-for="note in notes">
-              <div :style="{
-                'position': 'absolute',
-                'left': '40px',
-                'bottom': ((note.pitch - pitchMin) * pitchHeight) + 'px',
-                'width': '20px',
-                'height': pitchHeight + 'px',
-                'background-color': 'red',
-                }">   
-              </div>
-            </template>-->
           </div>
         </div>
       </div>
