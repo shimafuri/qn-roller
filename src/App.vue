@@ -1030,7 +1030,8 @@ export default {
                     'box-shadow': 'inset 0 0 2px black',
                     'font-size': '14px',
                     'font-weight': 'bold',
-                  }">
+                  }"
+                  @wheel="onWheel">
               {{chordInterval.chord === void 0 ? 'undefined' : JSON.stringify(chordInterval.chord)}}
             </div>
           `,
@@ -1040,6 +1041,25 @@ export default {
             };
           },
           props: ['chordInterval'],
+          methods: {
+            onWheel: function ($event) {
+              if ($event.deltaY > 0) {
+                this.chordInterval.chord[0] = (this.chordInterval.chord[0]+11) % 12;
+              } else if ($event.deltaY < 0) {
+                this.chordInterval.chord[0] = (this.chordInterval.chord[0]+1) % 12;
+              } else {
+                return; // Horizontal wheel input is not supported
+              }
+              // Remove duplicate root tone
+              this.chordInterval.chord = this.chordInterval.chord.filter((v, i, a) => {
+                if (i === 0) { return true; } // [0] is always a root tone, unremovable
+                if (v === a[0]) { return false; } // Remove another root tone if it is found
+                return true;
+              });
+
+              (this.$parent.rerender || this.$parent.$parent.rerender || this.$parent.$parent.$parent.rerender)();
+            },
+          },
         },
       },
     },
