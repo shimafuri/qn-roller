@@ -68,7 +68,7 @@ a {
   }
 }
 
-.pitch-row {
+.pitch-row-wrapper {
   overflow: visible;
 
   &.non-scale-tone {
@@ -83,41 +83,41 @@ a {
   }
 }
 
-.pitch-row-inner {
-  .pitch-row > & {
+.pitch-row {
+  .pitch-row-wrapper > & {
     overflow: visible;
   }
 
-  .pitch-row.scale-tone > & {
+  .pitch-row-wrapper.scale-tone > & {
     background-color: rgb(42, 45, 49);
 
     transition: box-shadow 0.5s ease-in-out;
     
-    #app:not(.flag-collapse) .pitch-row.non-scale-tone +
-    .pitch-row.scale-tone +
-    .pitch-row.non-scale-tone +
-    .pitch-row.scale-tone +
-    .pitch-row.non-scale-tone +
-    .pitch-row.scale-tone + & {
+    #app:not(.flag-collapse) .pitch-row-wrapper.non-scale-tone +
+    .pitch-row-wrapper.scale-tone +
+    .pitch-row-wrapper.non-scale-tone +
+    .pitch-row-wrapper.scale-tone +
+    .pitch-row-wrapper.non-scale-tone +
+    .pitch-row-wrapper.scale-tone + & {
       box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
     }
 
-    #app:not(.flag-collapse) .pitch-row.scale-tone +
-    .pitch-row.scale-tone +
-    .pitch-row.non-scale-tone +
-    .pitch-row.scale-tone +
-    .pitch-row.non-scale-tone +
-    .pitch-row.scale-tone + & {
+    #app:not(.flag-collapse) .pitch-row-wrapper.scale-tone +
+    .pitch-row-wrapper.scale-tone +
+    .pitch-row-wrapper.non-scale-tone +
+    .pitch-row-wrapper.scale-tone +
+    .pitch-row-wrapper.non-scale-tone +
+    .pitch-row-wrapper.scale-tone + & {
       box-shadow: inset 0px 1px 0px rgb(24, 25, 27);
     }
 
     #app.flag-collapse 
-    .pitch-row.scale-tone + & {
+    .pitch-row-wrapper.scale-tone + & {
       box-shadow: inset 0px 1px 0px rgb(35, 37, 39);
     }
   }
 
-  .pitch-row.non-scale-tone > & {
+  .pitch-row-wrapper.non-scale-tone > & {
     background-color: rgb(35, 37, 39);
     
     position: relative;
@@ -135,11 +135,11 @@ a {
 }
 
 .note {
-  .pitch-row.scale-tone & {
+  .pitch-row-wrapper.scale-tone & {
     background-color: rgb(62, 137, 155);
   }
 
-  .pitch-row.non-scale-tone & {
+  .pitch-row-wrapper.non-scale-tone & {
     background-color: rgb(247, 31, 31);
     
     transition: border-radius 0.5s ease-in-out;

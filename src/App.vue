@@ -110,7 +110,7 @@
                     <!-- Pitch row wrappers -->
                     <template v-for="pitch in pitches">
                       <div :class="{
-                        'pitch-row': true,
+                        'pitch-row-wrapper': true,
                         'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
                         'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
                         }" :style="{
@@ -122,7 +122,7 @@
                         }">
                         <!-- Pitch row -->
                         <div :class="{
-                          'pitch-row-inner': true,
+                          'pitch-row': true,
                           }" :style="{
                           'position': 'relative',
                           'width': '100%',
