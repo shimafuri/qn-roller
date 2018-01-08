@@ -235,15 +235,15 @@ const global = {
     //  Original scale = [9, 11, 0, 2, 4, 5, 7]
     //  Original root pitch = 7
     //  Original target pitch = 11
-    //  
+    //
     //  Normalized scale = [0, 2, 3, 5, 7, 8, 10]
     //  Normalized root pitch = 10
     //  Normalized target pitch = 2
     //
     //  Chromatic interval = 4
     //  Interval = major 3rd
-    const normalizedScale = global.getNormalizedScale(originalScale); // [9, 11, 0, 2, 4, 5, 7] -> [0, 2, 3, 5, 7, 8, 10]
-    const normalizedRootPitchClass = ((rootPitchClass - originalScale[0])+12)%12; // 
+    const normalizedScale = global.getNormalizedScale(originalScale);
+    const normalizedRootPitchClass = ((rootPitchClass - originalScale[0])+12)%12;
     const normalizedTargetPitchClass = ((targetPitchClass - originalScale[0])+12)%12;
     const chromaticInterval = ((normalizedTargetPitchClass - normalizedRootPitchClass)+12)%12;
 
@@ -253,210 +253,222 @@ const global = {
       case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
         switch (normalizedRootPitchClass) {
           // [I, 2nd, 3rd, 4th, 5th, 6th, 7th] = [0, 2, 3, 5, 7, 8, 10]
-          case 0: retval = [
-            ['Root'], // I
-            ['♭2'], // ♯I, ♭II
-            ['2'], // II
-            ['3'], // ♭III
-            ['♯3', '♭4'], // III
-            ['4'], // IV
-            ['♯4', '♭5'], // ♯IV, ♭V
-            ['5'], // V
-            ['6'], // ♭VI
-            ['♯6', '♭7'], // VI
-            ['7'], // ♭VII
-            ['♯7'], // VII
-          ][chromaticInterval];
-          break;
+          case 0:
+            retval = [
+              ['Root'], // I
+              ['♭2'], // ♯I, ♭II
+              ['2'], // II
+              ['3'], // ♭III
+              ['♯3', '♭4'], // III
+              ['4'], // IV
+              ['♯4', '♭5'], // ♯IV, ♭V
+              ['5'], // V
+              ['6'], // ♭VI
+              ['♯6', '♭7'], // VI
+              ['7'], // ♭VII
+              ['♯7'], // VII
+            ][chromaticInterval];
+            break;
 
           // [#I, 2nd, 3rd, 4th, 5th, 6th, 7th] = [1, 2, 3, 5, 7, 8, 10] <---- Using this here
           // [bII, 2nd, 3rd, 4th, 5th, 6th, 7th] = [1, 3, 5, 7, 8, 10, 0]
-          case 1: retval = [
-            ['Root'], // ♯I
-            ['2'], // II
-            ['3'], // ♭III
-            ['♯3', '♭4'], // III
-            ['4'], // IV
-            ['♯4', '♭5'], // ♯IV, ♭V
-            ['5'], // V
-            ['6'], // ♭VI
-            ['♯6', '♭7'], // VI
-            ['7'], // ♭VII
-            ['♯7'], // VII
-            ['Orig 1st'], // I
-          ][chromaticInterval];
-          break;
+          case 1:
+            retval = [
+              ['Root'], // ♯I
+              ['2'], // II
+              ['3'], // ♭III
+              ['♯3', '♭4'], // III
+              ['4'], // IV
+              ['♯4', '♭5'], // ♯IV, ♭V
+              ['5'], // V
+              ['6'], // ♭VI
+              ['♯6', '♭7'], // VI
+              ['7'], // ♭VII
+              ['♯7'], // VII
+              ['Orig 1st'], // I
+            ][chromaticInterval];
+            break;
 
           // [II, 2nd, 3rd, 4th, 5th, 6th, 7th] = [2, 3, 5, 7, 8, 10, 0]
-          case 2: retval = [
-            ['Root'], // II
-            ['2'], // ♭III
-            ['♯2', '♭3'], // III
-            ['3'], // IV
-            ['♯3', '♭4'], // ♯IV, ♭V
-            ['4'], // V
-            ['5'], // ♭VI
-            ['♯5', '♭6'], // VI
-            ['6'], // ♭VII
-            ['♯6', '♭7'], // VII
-            ['7'], // I
-            ['♯7'], // ♯I, ♭II
-          ][chromaticInterval];
-          break;
+          case 2:
+            retval = [
+              ['Root'], // II
+              ['2'], // ♭III
+              ['♯2', '♭3'], // III
+              ['3'], // IV
+              ['♯3', '♭4'], // ♯IV, ♭V
+              ['4'], // V
+              ['5'], // ♭VI
+              ['♯5', '♭6'], // VI
+              ['6'], // ♭VII
+              ['♯6', '♭7'], // VII
+              ['7'], // I
+              ['♯7'], // ♯I, ♭II
+            ][chromaticInterval];
+            break;
 
           // [bIII, 2nd, 3rd, 4th, 5th, 6th, 7th] = [3, 5, 7, 8, 10, 0, 2]
-          case 3: retval = [
-            ['Root'], // ♭III
-            ['♭2'], // III
-            ['2'], // IV
-            ['♯2', '♭3'], // ♯IV, ♭V
-            ['3'], // V
-            ['4'], // ♭VI
-            ['♯4', '♭5'], // VI
-            ['5'], // ♭VII
-            ['♯5', '♭6'], // VII
-            ['6'], // I
-            ['♯6', '♭7'], // ♯I, ♭II
-            ['7'], // II
-          ][chromaticInterval];
-          break;
+          case 3:
+            retval = [
+              ['Root'], // ♭III
+              ['♭2'], // III
+              ['2'], // IV
+              ['♯2', '♭3'], // ♯IV, ♭V
+              ['3'], // V
+              ['4'], // ♭VI
+              ['♯4', '♭5'], // VI
+              ['5'], // ♭VII
+              ['♯5', '♭6'], // VII
+              ['6'], // I
+              ['♯6', '♭7'], // ♯I, ♭II
+              ['7'], // II
+            ][chromaticInterval];
+            break;
 
           // [III, 2nd, 3rd, 4th, 5th, 6th, 7th] = [4, 5, 7, 8, 10, 0, 2]
-          case 4: retval = [
-            ['Root'], // III
-            ['2'], // IV
-            ['♯2', '♭3'], // ♯IV, ♭V
-            ['3'], // V
-            ['4'], // ♭VI
-            ['♯4', '♭5'], // VI
-            ['5'], // ♭VII
-            ['♯5', '♭6'], // VII
-            ['6'], // I
-            ['♯6', '♭7'], // ♯I, ♭II
-            ['7'], // II
-            ['Orig 1st'], // ♭III
-          ][chromaticInterval];
-          break;
+          case 4:
+            retval = [
+              ['Root'], // III
+              ['2'], // IV
+              ['♯2', '♭3'], // ♯IV, ♭V
+              ['3'], // V
+              ['4'], // ♭VI
+              ['♯4', '♭5'], // VI
+              ['5'], // ♭VII
+              ['♯5', '♭6'], // VII
+              ['6'], // I
+              ['♯6', '♭7'], // ♯I, ♭II
+              ['7'], // II
+              ['Orig 1st'], // ♭III
+            ][chromaticInterval];
+            break;
 
           // [IV, 2nd, 3rd, 4th, 5th, 6th, 7th] = [5, 7, 8, 10, 0, 2, 3]
-          case 5: retval = [
-            ['Root'], // IV
-            ['♭2'], // ♯IV, ♭V
-            ['2'], // V
-            ['3'], // ♭VI
-            ['♯3', '♭4'], // VI
-            ['4'], // ♭VII
-            ['♯4', '♭5'], // VII
-            ['5'], // I
-            ['♯5', '♭6'], // ♯I, ♭II
-            ['6'], // II
-            ['7'], // ♭III
-            ['♯7'], // III
-          ][chromaticInterval];
-          break;
+          case 5:
+            retval = [
+              ['Root'], // IV
+              ['♭2'], // ♯IV, ♭V
+              ['2'], // V
+              ['3'], // ♭VI
+              ['♯3', '♭4'], // VI
+              ['4'], // ♭VII
+              ['♯4', '♭5'], // VII
+              ['5'], // I
+              ['♯5', '♭6'], // ♯I, ♭II
+              ['6'], // II
+              ['7'], // ♭III
+              ['♯7'], // III
+            ][chromaticInterval];
+            break;
 
           // [#IV, 2nd, 3rd, 4th, 5th, 6th, 7th] = [6, 7, 8, 10, 0, 2, 3] <---- Using this here
           // [bV, 2nd, 3rd, 4th, 5th, 6th, 7th] = [6, 8, 10, 0, 2, 3, 5]
-          case 6: retval = [
-            ['Root'], // ♯IV, ♭V
-            ['2'], // V
-            ['3'], // ♭VI
-            ['♯3', '♭4'], // VI
-            ['4'], // ♭VII
-            ['♯4', '♭5'], // VII
-            ['5'], // I
-            ['♯5', '♭6'], // ♯I, ♭II
-            ['6'], // II
-            ['7'], // ♭III
-            ['♯7'], // III
-            ['Orig 1st'], // IV
-          ][chromaticInterval];
-          break;
+          case 6:
+            retval = [
+              ['Root'], // ♯IV, ♭V
+              ['2'], // V
+              ['3'], // ♭VI
+              ['♯3', '♭4'], // VI
+              ['4'], // ♭VII
+              ['♯4', '♭5'], // VII
+              ['5'], // I
+              ['♯5', '♭6'], // ♯I, ♭II
+              ['6'], // II
+              ['7'], // ♭III
+              ['♯7'], // III
+              ['Orig 1st'], // IV
+            ][chromaticInterval];
+            break;
 
           // [V, 2nd, 3rd, 4th, 5th, 6th, 7th] = [7, 8, 10, 0, 2, 3, 5]
-          case 7: retval = [
-            ['Root'], // V
-            ['2'], // ♭VI
-            ['♯2', '♭3'], // VI
-            ['3'], // ♭VII
-            ['♯3', '♭4'], // VII
-            ['4'], // I
-            ['♯4', '♭5'], // ♯I, ♭II
-            ['5'], // II
-            ['6'], // ♭III
-            ['♯6', '♭7'], // III
-            ['7'], // IV
-            ['♯7'], // ♯IV, ♭V
-          ][chromaticInterval];
-          break;
+          case 7:
+            retval = [
+              ['Root'], // V
+              ['2'], // ♭VI
+              ['♯2', '♭3'], // VI
+              ['3'], // ♭VII
+              ['♯3', '♭4'], // VII
+              ['4'], // I
+              ['♯4', '♭5'], // ♯I, ♭II
+              ['5'], // II
+              ['6'], // ♭III
+              ['♯6', '♭7'], // III
+              ['7'], // IV
+              ['♯7'], // ♯IV, ♭V
+            ][chromaticInterval];
+            break;
 
           // [bVI, 2nd, 3rd, 4th, 5th, 6th, 7th] = [8, 10, 0, 2, 3, 5, 7]
-          case 8: retval = [
-            ['Root'], // ♭VI
-            ['♭2'], // VI
-            ['2'], // ♭VII
-            ['♯2', '♭3'], // VII
-            ['3'], // I
-            ['♯3', '♭4'], // ♯I, ♭II
-            ['4'], // II
-            ['5'], // ♭III
-            ['♯5', '♭6'], // III
-            ['6'], // IV
-            ['♯6', '♭7'], // ♯IV, ♭V
-            ['7'], // V
-          ][chromaticInterval];
-          break;
+          case 8:
+            retval = [
+              ['Root'], // ♭VI
+              ['♭2'], // VI
+              ['2'], // ♭VII
+              ['♯2', '♭3'], // VII
+              ['3'], // I
+              ['♯3', '♭4'], // ♯I, ♭II
+              ['4'], // II
+              ['5'], // ♭III
+              ['♯5', '♭6'], // III
+              ['6'], // IV
+              ['♯6', '♭7'], // ♯IV, ♭V
+              ['7'], // V
+            ][chromaticInterval];
+            break;
 
           // [VI, 2nd, 3rd, 4th, 5th, 6th, 7th] = [9, 10, 0, 2, 3, 5, 7]
-          case 9: retval = [
-            ['Root'], // VI
-            ['2'], // ♭VII
-            ['♯2', '♭3'], // VII
-            ['3'], // I
-            ['♯3', '♭4'], // ♯I, ♭II
-            ['4'], // II
-            ['5'], // ♭III
-            ['♯5', '♭6'], // III
-            ['6'], // IV
-            ['♯6', '♭7'], // ♯IV, ♭V
-            ['7'], // V
-            ['Orig 1st'], // ♭VI
-          ][chromaticInterval];
-          break;
+          case 9:
+            retval = [
+              ['Root'], // VI
+              ['2'], // ♭VII
+              ['♯2', '♭3'], // VII
+              ['3'], // I
+              ['♯3', '♭4'], // ♯I, ♭II
+              ['4'], // II
+              ['5'], // ♭III
+              ['♯5', '♭6'], // III
+              ['6'], // IV
+              ['♯6', '♭7'], // ♯IV, ♭V
+              ['7'], // V
+              ['Orig 1st'], // ♭VI
+            ][chromaticInterval];
+            break;
 
           // [bVII, 2nd, 3rd, 4th, 5th, 6th, 7th] = [10, 0, 2, 3, 5, 7, 8]
-          case 10: retval = [
-            ['Root'], // ♭VII
-            ['♭2'], // VII
-            ['2'], // I
-            ['♯2', '♭3'], // ♯I, ♭II
-            ['3'], // II
-            ['4'], // ♭III
-            ['♯4', '♭5'], // III
-            ['5'], // IV
-            ['♯5', '♭6'], // ♯IV, ♭V
-            ['6'], // V
-            ['7'], // ♭VI
-            ['♯7'], // VI
-          ][chromaticInterval];
-          break;
+          case 10:
+            retval = [
+              ['Root'], // ♭VII
+              ['♭2'], // VII
+              ['2'], // I
+              ['♯2', '♭3'], // ♯I, ♭II
+              ['3'], // II
+              ['4'], // ♭III
+              ['♯4', '♭5'], // III
+              ['5'], // IV
+              ['♯5', '♭6'], // ♯IV, ♭V
+              ['6'], // V
+              ['7'], // ♭VI
+              ['♯7'], // VI
+            ][chromaticInterval];
+            break;
 
           // [VII, 2nd, 3rd, 4th, 5th, 6th, 7th] = [11, 0, 2, 3, 5, 7, 8]
-          case 11: retval = [
-            ['Root'], // VII
-            ['2'], // I
-            ['♯2', '♭3'], // ♯I, ♭II
-            ['3'], // II
-            ['4'], // ♭III
-            ['♯4', '♭5'], // III
-            ['5'], // IV
-            ['♯5', '♭6'], // ♯IV, ♭V
-            ['6'], // V
-            ['7'], // ♭VI
-            ['♯7'], // VI
-            ['Orig 1st'], // ♭VII
-          ][chromaticInterval];
-          break;
+          case 11:
+            retval = [
+              ['Root'], // VII
+              ['2'], // I
+              ['♯2', '♭3'], // ♯I, ♭II
+              ['3'], // II
+              ['4'], // ♭III
+              ['♯4', '♭5'], // III
+              ['5'], // IV
+              ['♯5', '♭6'], // ♯IV, ♭V
+              ['6'], // V
+              ['7'], // ♭VI
+              ['♯7'], // VI
+              ['Orig 1st'], // ♭VII
+            ][chromaticInterval];
+            break;
 
           default: throw new Error('Valid range of pitch class is 0-11.');
         }
@@ -467,7 +479,7 @@ const global = {
 
     // console.log(retval);
     return retval;
-  }
+  },
 };
 const getPageXY = (element) => {
   let xPosition = 0;
@@ -647,7 +659,7 @@ export default {
     },
     /**
      * Divides the specified duration into several durations based on the specified unit.
-     * 
+     *
      * Example
      *   Input: duration=840, unit=200
      *   Output: [

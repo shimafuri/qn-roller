@@ -38,10 +38,12 @@ module.exports = {
     'one-var': 'off',
     'one-var-declaration-per-line': 'off',
     'prefer-const': 'off',
+    'prefer-template': 'off',
     'quote-props': 'off',
     'semi-spacing': 'off',
     'space-infix-ops': 'off',
     'spaced-comment': 'off',
+    'space-in-parens': 'off',
     // don't require .vue extension when importing
     'import/extensions': ['error', 'always', {
       js: 'never',
