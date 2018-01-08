@@ -29,7 +29,7 @@
               }">
             <!-- Scale interval indicators -->
             <template v-for="int in scaleIntervals">
-              <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" />
+              <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
             </template>
           </div>
         </div>
@@ -934,20 +934,46 @@ export default {
       // console.log(`scale duration: ${baseScaleInterval.duration} - localOffset: ${localOffset} - duration: ${duration}`);
       let baseScaleIntervalIndex = this.scaleIntervals.findIndex(v => v === baseScaleInterval);
 
+      const targetArray = this.scaleIntervals;
       Array.prototype.splice.apply(
-        this.scaleIntervals,
+        targetArray,
         [
           baseScaleIntervalIndex,
           1,
-          ...this.divideScaleInterval(this.scaleIntervals[baseScaleIntervalIndex], localOffset + duration, [9, 11, 0, 2, 4, 5, 7], null),
+          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset + duration, [9, 11, 0, 2, 4, 5, 7], null),
         ],
       );
       Array.prototype.splice.apply(
-        this.scaleIntervals,
+        targetArray,
         [
           baseScaleIntervalIndex,
           1,
-          ...this.divideScaleInterval(this.scaleIntervals[baseScaleIntervalIndex], localOffset, null, [9, 11, 0, 2, 4, 5, 7]),
+          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset, null, [9, 11, 0, 2, 4, 5, 7]),
+        ],
+      );
+      this.rerender();
+    },
+    onNewChordInterval(baseScaleInterval, baseChordInterval, localOffset, duration) {
+      // console.log('onNewChordInterval');
+      // console.log(`chord duration: ${baseChordInterval.duration} - localOffset: ${localOffset} - duration: ${duration}`);
+      let baseChordIntervalIndex = baseScaleInterval.chordIntervals.findIndex(v => v === baseChordInterval);
+
+      const centralTone = (baseScaleInterval != null ? baseScaleInterval.scale[0] : 0);
+      const targetArray = baseScaleInterval.chordIntervals;
+      Array.prototype.splice.apply(
+        targetArray,
+        [
+          baseChordIntervalIndex,
+          1,
+          ...this.divideChordInterval(targetArray[baseChordIntervalIndex], localOffset + duration, [centralTone], null),
+        ],
+      );
+      Array.prototype.splice.apply(
+        targetArray,
+        [
+          baseChordIntervalIndex,
+          1,
+          ...this.divideChordInterval(targetArray[baseChordIntervalIndex], localOffset, null, [centralTone]),
         ],
       );
       this.rerender();
@@ -1189,7 +1215,7 @@ export default {
                     'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                     'height': '24px',
                   }">
-              <chord-interval-indicator :chordInterval="chd"/>
+              <chord-interval-indicator :scaleInterval="scaleInterval" :chordInterval="chd" @new-chord-interval="onNewChordInterval" />
             </div>
           </template>
         </div>
@@ -1205,6 +1231,9 @@ export default {
       },
       props: ['scaleInterval'],
       methods: {
+        onNewChordInterval(...args) {
+          this.$emit.apply(this, ['new-chord-interval', ...args]); // Redirect
+        },
         onMouseDown: function ($event) {
           if (this.scaleInterval.scale != null) { return; } // Able to add a new scale interval only if this scale interval is empty
 
@@ -1284,32 +1313,120 @@ export default {
       components: {
         'chord-interval-indicator': {
           template: `
-            <!-- Indicator -->
-            <div v-show="chordInterval.chord != null"
-                :style="{
-                    'display': 'flex',
-                    'align-items': 'center',
-                    'position': 'static',
-                    'box-sizing': 'border-box',
-                    'padding-left': '6px',
+            <!-- Wrapper -->
+            <div :style="{
+                    'position': 'relative',
                     'width': '100%',
                     'height': '100%',
-                    'background-color': 'white',
-                    'box-shadow': 'inset 0 0 2px black',
-                    'font-size': '14px',
-                    'font-weight': 'bold',
-                  }"
-                  @wheel="onWheel">
-              {{chordInterval.chord === void 0 ? 'undefined' : JSON.stringify(chordInterval.chord)}}
+                  }">
+              <!-- Mouse down detector -->
+              <div :style="{
+                      'position': 'absolute',
+                      'top': '0',
+                      'left': '0',
+                      'width': '100%',
+                      'height': '100%',
+                    }"
+                    @mousedown="onMouseDown">
+              </div>
+              <!-- Indicator -->
+              <div v-show="chordInterval.chord != null"
+                  :style="{
+                      'display': 'flex',
+                      'align-items': 'center',
+                      'position': 'absolute',
+                      'top': '0',
+                      'left': '0',
+                      'box-sizing': 'border-box',
+                      'padding-left': '6px',
+                      'width': '100%',
+                      'height': '100%',
+                      'background-color': 'white',
+                      'box-shadow': 'inset 0 0 2px black',
+                      'font-size': '14px',
+                      'font-weight': 'bold',
+                    }"
+                    @wheel="onWheel">
+                {{chordInterval.chord === void 0 ? 'undefined' : JSON.stringify(chordInterval.chord)}}
+              </div>
+              <!-- Input indicator -->
+              <div v-show="inputting"
+                  :style="{
+                      'position': 'absolute',
+                      'top': '0',
+                      'left': ((newIntervalLocalOffset / 1920.0) * global.barWidth) + 'px',
+                      'width': ((newIntervalDuration / 1920.0) * global.barWidth) + 'px',
+                      'height': '100%',
+                      'background-color': 'white',
+                      'box-shadow': 'inset 0 0 2px black',
+                      'pointer-events': 'none',
+                      }">
+              </div>
             </div>
           `,
           data() {
             return {
               global: global,
+              headerPane: null, // to be assigned
+              inputting: false,
+              newIntervalLocalOffset: null,
+              newIntervalDuration: null,
             };
           },
-          props: ['chordInterval'],
+          props: ['scaleInterval', 'chordInterval'],
           methods: {
+            onMouseDown: function ($event) {
+              if (this.chordInterval.chord != null) { return; } // Able to add a new chord interval only if this chord interval is empty
+
+              this.inputting = true;
+
+              const updateNewIntervalDuration = (eventPageX) => {
+                this.newIntervalDuration = Math.round(((((this.headerPane.scrollLeft + eventPageX) - getPageXY(this.$el).x)+1) / this.$el.offsetWidth) * this.chordInterval.duration) - this.newIntervalLocalOffset;
+                // console.log(this.newIntervalDuration);
+                if (this.newIntervalDuration < (true ? global.granularity : 0)) { // Lower boundary clipping
+                  this.newIntervalDuration = (true ? global.granularity : 0);
+                } else if (this.newIntervalLocalOffset + this.newIntervalDuration > this.chordInterval.duration) { // Higher boundary clipping
+                  this.newIntervalDuration = this.chordInterval.duration - this.newIntervalLocalOffset;
+                }
+                // console.log(this.newIntervalDuration);
+                if (true) { // Align the duration based on the granularity
+                  if ((this.newIntervalDuration % global.granularity) !== 0) {
+                    this.newIntervalDuration = this.newIntervalDuration - (this.newIntervalDuration % global.granularity) + global.granularity;
+                  }
+                }
+                // console.log(this.newIntervalDuration);
+              };
+              this.newIntervalLocalOffset = Math.round((((this.headerPane.scrollLeft + $event.pageX) - getPageXY(this.$el).x) / this.$el.offsetWidth) * this.chordInterval.duration);
+              // console.log(this.newIntervalLocalOffset);
+              if (true) { // Align the local offset based on the granularity
+                this.newIntervalLocalOffset = this.newIntervalLocalOffset - (this.newIntervalLocalOffset % global.granularity);
+              }
+              // console.log(this.newIntervalLocalOffset);
+              updateNewIntervalDuration($event.pageX);
+
+              // console.log(this.newIntervalLocalOffset);
+              // console.log(this.newIntervalDuration);
+
+              let onMouseMove;
+              let onMouseUp;
+              onMouseMove = (event) => {
+                // console.log('mousemove');
+                // console.log(event.pageX);
+                // console.log(getPageXY(this.$el).x);
+                updateNewIntervalDuration(event.pageX);
+              };
+              onMouseUp = (event) => {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+
+                this.$emit('new-chord-interval', this.scaleInterval, this.chordInterval, this.newIntervalLocalOffset, this.newIntervalDuration);
+                this.inputting = false;
+                this.newIntervalLocalOffset = null;
+                this.newIntervalDuration = null;
+              };
+              window.addEventListener('mousemove', onMouseMove);
+              window.addEventListener('mouseup', onMouseUp);
+            },
             onWheel: function ($event) {
               if ($event.deltaY > 0) {
                 this.chordInterval.chord[0] = (this.chordInterval.chord[0]+11) % 12;
@@ -1327,6 +1444,14 @@ export default {
 
               (this.$parent.rerender || this.$parent.$parent.rerender || this.$parent.$parent.$parent.rerender)();
             },
+          },
+          mounted() {
+            try {
+              this.headerPane = this.$parent.$parent.$refs.headerPane || this.$parent.$parent.$parent.$refs.headerPane || this.$parent.$parent.$parent.$parent.$refs.headerPane;
+            } catch (e) {
+              console.error('Header pane is not found!');
+              throw e;
+            }
           },
         },
       },
