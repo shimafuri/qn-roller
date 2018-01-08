@@ -133,6 +133,10 @@ a {
     }
   }
 
+  .pitch-row-wrapper.central-tone > & {
+    background-color: rgb(26, 48, 60);
+  }
+
   .pitch-row-wrapper.root-tone > & {
     background-color: rgb(0, 0, 0);
   }

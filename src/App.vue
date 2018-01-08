@@ -113,6 +113,7 @@
                         'pitch-row-wrapper': true,
                         'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
                         'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
+                        'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
                         'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
                         }" :style="{
                         'position': 'absolute',
