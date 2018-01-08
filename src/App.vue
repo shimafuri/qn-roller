@@ -138,14 +138,14 @@
                       </div>
                     </template>
                     <!-- Beat indicators -->
-                    <template v-for="beat in divideDuration(chd.duration, 480)">
+                    <template v-for="(beat, index) in divideDuration(chd.duration, 480)">
                       <div :style="{
                         'position': 'absolute',
                         'top': '0',
                         'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
                         'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
                         'height': '100%',
-                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 1px, transparent 1px, transparent 100%)`,
+                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
                         'pointer-events': `none`,
                       }">
                       </div>
