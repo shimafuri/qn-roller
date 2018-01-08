@@ -866,11 +866,13 @@ export default {
     },
     'scale-interval-indicator': {
       template: `
+        <!-- Wrapper -->
         <div :style="{
                 'position': 'relative',
                 'width': ((scaleInterval.duration / 1920.0) * global.barWidth) + 'px',
                 'height': '100%',
               }">
+          <!-- Mouse down detector -->
           <div :style="{
                   'position': 'absolute',
                   'top': '0',
@@ -880,6 +882,7 @@ export default {
                 }"
                 @mousedown="onMouseDown">
           </div>
+          <!-- Indicator -->
           <div v-show="scaleInterval.scale != null"
                :style="{
                   'display': 'flex',
@@ -901,6 +904,7 @@ export default {
               {{global.getScaleNames(scaleInterval.scale).join(' / ')}}
             </template>
           </div>
+          <!-- Input indicator -->
           <div v-show="inputting"
                :style="{
                   'position': 'absolute',
@@ -913,6 +917,7 @@ export default {
                   'pointer-events': 'none',
                   }">
           </div>
+          <!-- Child chord intervals -->
           <template v-for="chd in scaleInterval.chordIntervals">
             <div :style="{
                     'position': 'absolute',
@@ -1016,6 +1021,7 @@ export default {
       components: {
         'chord-interval-indicator': {
           template: `
+            <!-- Indicator -->
             <div v-show="chordInterval.chord != null"
                 :style="{
                     'display': 'flex',
