@@ -132,6 +132,10 @@ a {
       height: 4px !important;
     }
   }
+
+  .pitch-row-wrapper.root-tone > & {
+    background-color: rgb(0, 0, 0);
+  }
 }
 
 .note {
@@ -151,5 +155,9 @@ a {
     #app.flag-collapse & {
       border-radius: 16px;
     }
+  }
+
+  .pitch-row-wrapper.root-tone & {
+    background-color: rgb(0, 0, 0);
   }
 }

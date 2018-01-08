@@ -113,6 +113,7 @@
                         'pitch-row-wrapper': true,
                         'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
                         'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
+                        'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
                         }" :style="{
                         'position': 'absolute',
                         'width': '100%',
@@ -131,7 +132,7 @@
                           }">
                           <!-- Notes -->
                           <template v-for="note in chd.notes">
-                            <note v-if="note.pitch === pitch" :scale-interval="int" :note="note" />
+                            <note v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
                           </template>
                         </div>
                       </div>
@@ -831,7 +832,7 @@ export default {
               'white-space': 'nowrap',
               'position': 'absolute',
               'box-sizing': 'border-box',
-              'border': '1px black solid',
+              'border': (isRoot ? '1px white solid' : '1px black solid'),
               'top': '0',
               'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
               'padding-left': '4px',
@@ -856,7 +857,12 @@ export default {
           global: global,
         };
       },
-      props: ['scaleInterval', 'note'],
+      computed: {
+        isRoot() {
+          return (this.scaleInterval.scale == null ? false : (this.chordInterval.chord == null ? false : this.note.pitch % 12 === this.chordInterval.chord[0]));
+        },
+      },
+      props: ['scaleInterval', 'chordInterval', 'note'],
     },
     'scale-interval-indicator': {
       template: `
