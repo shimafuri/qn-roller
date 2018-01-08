@@ -145,6 +145,7 @@
                         'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
                         'height': '100%',
                         'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : 'rgb(46, 48, 50)'} 1px, transparent 1px, transparent 100%)`,
+                        'pointer-events': `none`,
                       }">
                       </div>
                     </template>
