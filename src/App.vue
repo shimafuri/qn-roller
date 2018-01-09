@@ -28,9 +28,7 @@
               'transform': 'translate3d(0, 0, 0)',
               }">
             <!-- Scale interval indicators -->
-            <template v-for="int in scaleIntervals">
-              <scale-interval-indicator :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
-            </template>
+            <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
           </div>
         </div>
       </div>
@@ -52,21 +50,19 @@
                 'background-color': 'rgb(240, 242, 243)',
                 'transform': 'translate3d(0, 0, 0)',
                 }">
-              <template v-for="pitch in pitches">
-                <div :style="{
-                  'height': pitchHeight + 'px',
-                  }"
-                  :class="{
-                    'piano-key': true,
-                    'scale-tone': (
-                      [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                      ),
-                    'non-scale-tone': !(
-                      [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                      ),
-                  }">
-                </div>
-              </template>
+              <div v-for="pitch in pitches" :key="pitch" :style="{
+                'height': pitchHeight + 'px',
+                }"
+                :class="{
+                  'piano-key': true,
+                  'scale-tone': (
+                    [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                    ),
+                  'non-scale-tone': !(
+                    [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                    ),
+                }">
+              </div>
             </div>
           </div>
           <!-- Content viewport border -->
@@ -87,74 +83,64 @@
               'transform-style': 'preserve-3d',
               }">
             <!-- Scale intervals -->
-            <template v-for="int in scaleIntervals">
-              <div :style="{
+            <div v-for="int in scaleIntervals" :key="int.id" :style="{
+              'display': 'flex',
+              'flex-flow': 'row nowrap',
+              'box-sizing': 'border-box',
+              'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
+              'height': '100%',
+              'box-shadow': 'inset 0 0 2px black',
+              }">
+              <!-- Chord intervals -->
+              <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
+                'position': 'relative',
                 'display': 'flex',
-                'flex-flow': 'row nowrap',
-                'box-sizing': 'border-box',
-                'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
+                'flex-flow': 'column nowrap',
+                'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                 'height': '100%',
-                'box-shadow': 'inset 0 0 2px black',
+                'box-shadow': 'inset 0 0 2px red',
+                'transform-style': 'preserve-3d',
                 }">
-                <!-- Chord intervals -->
-                <template v-for="chd in int.chordIntervals">
-                  <div :style="{
+                <!-- Pitch row wrappers -->
+                <div v-for="pitch in pitches" :key="pitch" :class="{
+                  'pitch-row-wrapper': true,
+                  'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
+                  'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
+                  'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
+                  'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
+                  }" :style="{
+                  'position': 'absolute',
+                  'width': '100%',
+                  'height': pitchHeight + 'px',
+                  'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                  'transform-style': 'preserve-3d',
+                  }">
+                  <!-- Pitch row -->
+                  <div :class="{
+                    'pitch-row': true,
+                    }" :style="{
                     'position': 'relative',
-                    'display': 'flex',
-                    'flex-flow': 'column nowrap',
-                    'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
+                    'width': '100%',
                     'height': '100%',
-                    'box-shadow': 'inset 0 0 2px red',
                     'transform-style': 'preserve-3d',
                     }">
-                    <!-- Pitch row wrappers -->
-                    <template v-for="pitch in pitches">
-                      <div :class="{
-                        'pitch-row-wrapper': true,
-                        'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
-                        'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
-                        'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
-                        'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
-                        }" :style="{
-                        'position': 'absolute',
-                        'width': '100%',
-                        'height': pitchHeight + 'px',
-                        'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
-                        'transform-style': 'preserve-3d',
-                        }">
-                        <!-- Pitch row -->
-                        <div :class="{
-                          'pitch-row': true,
-                          }" :style="{
-                          'position': 'relative',
-                          'width': '100%',
-                          'height': '100%',
-                          'transform-style': 'preserve-3d',
-                          }">
-                          <!-- Notes -->
-                          <template v-for="note in chd.notes">
-                            <note v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
-                          </template>
-                        </div>
-                      </div>
-                    </template>
-                    <!-- Beat indicators -->
-                    <template v-for="(beat, index) in divideDuration(chd.duration, 480)">
-                      <div :style="{
-                        'position': 'absolute',
-                        'top': '0',
-                        'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
-                        'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
-                        'height': '100%',
-                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
-                        'pointer-events': `none`,
-                      }">
-                      </div>
-                    </template>
+                    <!-- Notes -->
+                    <note v-for="note in chd.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
                   </div>
-                </template>
+                </div>
+                <!-- Beat indicators -->
+                <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
+                  'position': 'absolute',
+                  'top': '0',
+                  'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                  'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                  'height': '100%',
+                  'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
+                  'pointer-events': `none`,
+                }">
+                </div>
               </div>
-            </template>
+            </div>
           </div>
         </div>
       </div>
@@ -509,6 +495,7 @@ export default {
       pitchHeightMax: 21,
       scaleIntervals: [
         {
+          id: Math.random(),
           duration: 1920 * 4, // 4 bars
           scale: null, // empty interval
           chordIntervals: (() => {
@@ -517,21 +504,25 @@ export default {
               arr = arr.concat(
                 [
                   {
+                    id: Math.random(),
                     localOffset: 3840*i + 0,
                     duration: 960,
                     chord: [9, 0, 4, 7], // Am7
                     notes: [
                       {
+                        id: Math.random(),
                         localOffset: 0,
                         duration: 240,
                         pitch: 12 + (9 + 1*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 240,
                         duration: 240,
                         pitch: 12 + (4 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 480,
                         duration: 480,
                         pitch: 12 + (7 + 2*12),
@@ -539,26 +530,31 @@ export default {
                     ],
                   },
                   {
+                    id: Math.random(),
                     localOffset: 3840*i + 960,
                     duration: 960,
                     chord: [5, 9, 0, 4], // FM7
                     notes: [
                       {
+                        id: Math.random(),
                         localOffset: 0,
                         duration: 240,
                         pitch: 12 + (5 + 1*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 240,
                         duration: 240,
                         pitch: 12 + (0 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 240,
                         duration: 240,
                         pitch: 12 + (1 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 480,
                         duration: 480,
                         pitch: 12 + (4 + 2*12),
@@ -566,21 +562,25 @@ export default {
                     ],
                   },
                   {
+                    id: Math.random(),
                     localOffset: 3840*i + 960 * 2,
                     duration: 960,
                     chord: [7, 11, 2, 5], // G7
                     notes: [
                       {
+                        id: Math.random(),
                         localOffset: 0,
                         duration: 240,
                         pitch: 12 + (7 + 1*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 240,
                         duration: 240,
                         pitch: 12 + (2 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 480,
                         duration: 480,
                         pitch: 12 + (5 + 2*12),
@@ -588,21 +588,25 @@ export default {
                     ],
                   },
                   {
+                    id: Math.random(),
                     localOffset: 3840*i + 960 * 3,
                     duration: 960,
                     chord: [0, 4, 7, 11], // CM7
                     notes: [
                       {
+                        id: Math.random(),
                         localOffset: 0,
                         duration: 240,
                         pitch: 12 + (0 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 240,
                         duration: 240,
                         pitch: 12 + (7 + 2*12),
                       },
                       {
+                        id: Math.random(),
                         localOffset: 480,
                         duration: 480,
                         pitch: 12 + (11 + 2*12),
@@ -616,10 +620,12 @@ export default {
           })(),
         },
         {
+          id: Math.random(),
           duration: 1920 * 4,
           scale: [9, 11, 0, 2, 4, 5, 7], // A minor
           chordIntervals: [
             {
+              id: Math.random(),
               localOffset: 0,
               duration: 1920 * 4,
               chord: null,
@@ -813,6 +819,7 @@ export default {
                         if (ns.isOn === true) {
                           midiNotes.push(
                             {
+                              id: Math.random(),
                               channel: midiEvent.channel,
                               localOffset: ns.onTime,
                               duration: tick - ns.onTime,
@@ -844,6 +851,7 @@ export default {
                           } else {
                             midiNotes.push(
                               {
+                                id: Math.random(),
                                 channel: midiEvent.channel,
                                 localOffset: ns.onTime,
                                 duration: tick - ns.onTime,
@@ -864,10 +872,12 @@ export default {
               }
               this.scaleIntervals.push(
                 {
+                  id: Math.random(),
                   duration: tick,
                   scale: null,
                   chordIntervals: [
                     {
+                      id: Math.random(),
                       localOffset: 0,
                       duration: tick,
                       chord: null,
@@ -991,6 +1001,7 @@ export default {
       if (boundaryOffset === baseScaleInterval.duration) {
         return [
           {
+            id: Math.random(),
             duration: baseScaleInterval.duration,
             scale: scaleA,
             chordIntervals: baseScaleInterval.chordIntervals,
@@ -1000,6 +1011,7 @@ export default {
       if (boundaryOffset === 0) {
         return [
           {
+            id: Math.random(),
             duration: baseScaleInterval.duration,
             scale: scaleB,
             chordIntervals: baseScaleInterval.chordIntervals,
@@ -1008,11 +1020,13 @@ export default {
       }
 
       const newScaleIntervalA = {
+        id: Math.random(),
         duration: boundaryOffset, // Range: [0, boundaryOffset]
         scale: scaleA,
         chordIntervals: [], // to be assigned
       };
       const newScaleIntervalB = {
+        id: Math.random(),
         duration: baseScaleInterval.duration - boundaryOffset, // Range: [boundaryOffset, duration]
         scale: scaleB,
         chordIntervals: [], // to be assigned
@@ -1081,12 +1095,14 @@ export default {
       // console.log(`divideChordInterval`);
       // console.log(`chord localOffset: ${oldChordInterval.localOffset} - chord duration: ${oldChordInterval.duration} - boundaryOffset: ${boundaryOffset}`);
       const newChordIntervalA = {
+        id: Math.random(),
         localOffset: oldChordInterval.localOffset,
         duration: boundaryOffset, // Range: [0, boundaryOffset]
         chord: chordA,
         notes: [], // to be assigned
       };
       const newChordIntervalB = {
+        id: Math.random(),
         localOffset: oldChordInterval.localOffset + boundaryOffset,
         duration: oldChordInterval.duration - boundaryOffset, // Range: [boundaryOffset, duration]
         chord: chordB,
