@@ -3,141 +3,172 @@
     :class="{
       'flag-collapse': flagCollapse,
     }"
-    style="width: 100%; height: 100%; display: flex; flex-flow: column nowrap;"
+    style="width: 100%; height: 100%; background-color: rgb(28, 28, 28); display: flex; flex-flow: column nowrap;"
     @dragover="onDragOver($event)"
     @drop="onDrop($event)"
     @wheel="onWheel">
-    <!-- Top part -->
-    <div style="height: 48px;">
-      <!-- Left/Right divider -->
-      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
-        <!-- Left side -->
-        <div style="width: 64px; background-color: rgb(39, 42, 45);">
-          <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
-        </div>
-        <!-- Right side (horizontally scrollable) -->
-        <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
-            @scroll="onScroll_headerPane($event)">
-          <!-- Content -->
-          <div :style="{
-              'display': 'flex',
-              'flex-flow': 'row nowrap',
-              'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-              'height': '48px',
-              'background-color': 'rgb(42, 45, 49)',
-              'transform': 'translate3d(0, 0, 0)',
-              }">
-            <!-- Scale interval indicators -->
-            <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
-          </div>
-        </div>
+    <!-- Logo and Menu part -->
+    <div style="height: 32px; position: relative;">
+      <!-- Content wrapper -->
+      <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-color: rgb(58, 58, 58); display: flex; flex-flow: row nowrap;">
+        <!-- Logo part -->
+        <div style="width: 100px; background-color: rgb(40, 40, 40);"></div>
+        <!-- Menu part -->
+        <div style="flex: 1; width: 0; background-color: transparent;"></div>
       </div>
+      <!-- Content wrapper border -->
+      <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-image: linear-gradient(to top, black 0px, black 1px, transparent 1px, transparent 100%); pointer-events: none;"></div>
     </div>
-    <!-- Bottom part -->
-    <div style="flex: 1; height: 0;">
-      <!-- Left/Right divider -->
-      <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
-        <!-- Left side -->
-        <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
-          <!-- Content viewport (vertically scrollable) -->
-          <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
-            @scroll="onScroll_pitchesPane($event)">
-            <!-- Content -->
-            <div
-              :style="{
-                'width': '100%',
-                'height': (pitches.length * pitchHeight) + 'px',
-                'background-color': 'rgb(240, 242, 243)',
-                'transform': 'translate3d(0, 0, 0)',
-                }">
-              <div v-for="pitch in pitches" :key="pitch" :style="{
-                'height': pitchHeight + 'px',
-                }"
-                :class="{
-                  'piano-key': true,
-                  'scale-tone': (
-                    [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                    ),
-                  'non-scale-tone': !(
-                    [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                    ),
-                }">
+    <!-- Tool bar part -->
+    <div style="height: 32px; position: relative;">
+      <!-- Content wrapper -->
+      <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-color: rgb(94, 101, 108); display: flex; flex-flow: row nowrap;">
+        <div style="flex: 1; width: 0; background-color: transparent;"></div>
+      </div>
+      <!-- Content wrapper border -->
+      <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-image: linear-gradient(to top, black 0px, black 1px, transparent 1px, transparent 100%); pointer-events: none;"></div>
+    </div>
+    <!-- Main part -->
+    <div style="flex: 1; height: 0; margin: 2px; border: 1px solid black; display: flex; flex-flow: row nowrap;">
+      <!-- Track List (Left) -->
+      <div style="width: 192px; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
+        <div style="flex: 1; height: 0; background-color: rgb(94, 101, 108); margin-right: 1px;"></div>
+      </div>
+      <!-- Track Editor (Right) -->
+      <div style="flex: 1; width: 0; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
+        <!-- Top part -->
+        <div style="height: 48px;">
+          <!-- Left/Right divider -->
+          <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
+            <!-- Left side -->
+            <div style="width: 64px; background-color: rgb(39, 42, 45);">
+              <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
+            </div>
+            <!-- Right side (horizontally scrollable) -->
+            <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
+                @scroll="onScroll_headerPane($event)">
+              <!-- Content -->
+              <div :style="{
+                  'display': 'flex',
+                  'flex-flow': 'row nowrap',
+                  'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
+                  'height': '48px',
+                  'background-color': 'rgb(42, 45, 49)',
+                  'transform': 'translate3d(0, 0, 0)',
+                  }">
+                <!-- Scale interval indicators -->
+                <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
               </div>
             </div>
           </div>
-          <!-- Content viewport border -->
-          <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
         </div>
-        <!-- Right side -->
-        <div ref="notesPane"
-             style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
-             @scroll="onScroll_notesPane($event)">
-          <!-- Content -->
-          <div :style="{
-              'display': 'flex',
-              'flex-flow': 'row nowrap',
-              'position': 'relative',
-              'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-              'height': (pitches.length * pitchHeight) + 'px',
-              'transform': 'translate3d(0, 0, 0)',
-              'transform-style': 'preserve-3d',
-              }">
-            <!-- Scale intervals -->
-            <div v-for="int in scaleIntervals" :key="int.id" :style="{
-              'display': 'flex',
-              'flex-flow': 'row nowrap',
-              'box-sizing': 'border-box',
-              'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
-              'height': '100%',
-              'box-shadow': 'inset 0 0 2px black',
-              }">
-              <!-- Chord intervals -->
-              <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
-                'position': 'relative',
-                'display': 'flex',
-                'flex-flow': 'column nowrap',
-                'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
-                'height': '100%',
-                'box-shadow': 'inset 0 0 2px red',
-                'transform-style': 'preserve-3d',
-                }">
-                <!-- Pitch row wrappers -->
-                <div v-for="pitch in pitches" :key="pitch" :class="{
-                  'pitch-row-wrapper': true,
-                  'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
-                  'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
-                  'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
-                  'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
-                  }" :style="{
-                  'position': 'absolute',
-                  'width': '100%',
-                  'height': pitchHeight + 'px',
-                  'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
-                  'transform-style': 'preserve-3d',
-                  }">
-                  <!-- Pitch row -->
-                  <div :class="{
-                    'pitch-row': true,
-                    }" :style="{
-                    'position': 'relative',
+        <!-- Bottom part -->
+        <div style="flex: 1; height: 0;">
+          <!-- Left/Right divider -->
+          <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
+            <!-- Left side -->
+            <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
+              <!-- Content viewport (vertically scrollable) -->
+              <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
+                @scroll="onScroll_pitchesPane($event)">
+                <!-- Content -->
+                <div
+                  :style="{
                     'width': '100%',
-                    'height': '100%',
-                    'transform-style': 'preserve-3d',
+                    'height': (pitches.length * pitchHeight) + 'px',
+                    'background-color': 'rgb(240, 242, 243)',
+                    'transform': 'translate3d(0, 0, 0)',
                     }">
-                    <!-- Notes -->
-                    <note v-for="note in chd.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
+                  <div v-for="pitch in pitches" :key="pitch" :style="{
+                    'height': pitchHeight + 'px',
+                    }"
+                    :class="{
+                      'piano-key': true,
+                      'scale-tone': (
+                        [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                        ),
+                      'non-scale-tone': !(
+                        [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                        ),
+                    }">
                   </div>
                 </div>
-                <!-- Beat indicators -->
-                <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
-                  'position': 'absolute',
-                  'top': '0',
-                  'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
-                  'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+              </div>
+              <!-- Content viewport border -->
+              <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
+            </div>
+            <!-- Right side -->
+            <div ref="notesPane"
+                style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
+                @scroll="onScroll_notesPane($event)">
+              <!-- Content -->
+              <div :style="{
+                  'display': 'flex',
+                  'flex-flow': 'row nowrap',
+                  'position': 'relative',
+                  'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
+                  'height': (pitches.length * pitchHeight) + 'px',
+                  'transform': 'translate3d(0, 0, 0)',
+                  'transform-style': 'preserve-3d',
+                  }">
+                <!-- Scale intervals -->
+                <div v-for="int in scaleIntervals" :key="int.id" :style="{
+                  'display': 'flex',
+                  'flex-flow': 'row nowrap',
+                  'box-sizing': 'border-box',
+                  'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
                   'height': '100%',
-                  'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
-                  'pointer-events': `none`,
-                }">
+                  'box-shadow': 'inset 0 0 2px black',
+                  }">
+                  <!-- Chord intervals -->
+                  <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
+                    'position': 'relative',
+                    'display': 'flex',
+                    'flex-flow': 'column nowrap',
+                    'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
+                    'height': '100%',
+                    'box-shadow': 'inset 0 0 2px red',
+                    'transform-style': 'preserve-3d',
+                    }">
+                    <!-- Pitch row wrappers -->
+                    <div v-for="pitch in pitches" :key="pitch" :class="{
+                      'pitch-row-wrapper': true,
+                      'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
+                      'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
+                      'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
+                      'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
+                      }" :style="{
+                      'position': 'absolute',
+                      'width': '100%',
+                      'height': pitchHeight + 'px',
+                      'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                      'transform-style': 'preserve-3d',
+                      }">
+                      <!-- Pitch row -->
+                      <div :class="{
+                        'pitch-row': true,
+                        }" :style="{
+                        'position': 'relative',
+                        'width': '100%',
+                        'height': '100%',
+                        'transform-style': 'preserve-3d',
+                        }">
+                        <!-- Notes -->
+                        <note v-for="note in chd.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
+                      </div>
+                    </div>
+                    <!-- Beat indicators -->
+                    <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
+                      'position': 'absolute',
+                      'top': '0',
+                      'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                      'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                      'height': '100%',
+                      'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
+                      'pointer-events': `none`,
+                    }">
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
