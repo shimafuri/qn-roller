@@ -23,7 +23,41 @@
     <div style="height: 32px; position: relative;">
       <!-- Content wrapper -->
       <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-color: rgb(94, 101, 108); display: flex; flex-flow: row nowrap;">
-        <div style="flex: 1; width: 0; background-color: transparent;"></div>
+        <div style="flex: 1; width: 0; background-color: transparent; display: flex; flex-flow: row nowrap; align-items: center; color: white; font-size: 12px;">
+          <span style="display: inline-block; width: 10px;"></span>
+          <span style="display: inline-block;">MIDI Input:</span>          
+          <span style="display: inline-block; width: 10px;"></span>
+          <template v-if="midiAccess != null">
+            <template v-if="selectedMidiInputs != null && selectedMidiInputs.length > 0">
+              <template v-for="input in selectedMidiInputs">
+                {{input.ref.name}}
+                ({{input.channels.map(v => `CH${v}`).join(', ')}})
+              </template>
+            </template>
+            <template v-else>
+              &lt;Connected (No device is selected)&gt;
+            </template>
+          </template>
+          <template v-else>
+            &lt;Not connected&gt;
+          </template>
+          <span style="display: inline-block; width: 10px;"></span>
+          <span style="display: inline-block; height: 20px; padding: 0 4px; background-color: rgba(255, 255, 255, 0.3);"
+                @click="startMidiInputConfiguration">
+            <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; align-items: center;">
+              Configure
+            </div>
+          </span>
+          <template v-if="midiAccess != null">
+            <span style="display: inline-block; width: 10px;"></span>
+            <span style="display: inline-block; height: 20px; padding: 0 4px; background-color: rgba(255, 255, 255, 0.3);"
+                  @click="disconnectMidiInput">
+              <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; align-items: center;">
+                Disconnect
+              </div>
+            </span>
+          </template>
+        </div>
       </div>
       <!-- Content wrapper border -->
       <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-image: linear-gradient(to top, black 0px, black 1px, transparent 1px, transparent 100%); pointer-events: none;"></div>
@@ -176,6 +210,31 @@
         </div>
       </div>
     </div>
+    <modal name="midi-input-configuration" height="auto">
+      <div style="padding: 14px 16px; font-size: 14px;">
+        <template v-if="midiAccess != null">
+          <template v-if="midiInputs != null">
+            <div v-for="(input, index) in midiInputs" :key="input.name"
+                 :style="{
+                   'margin-top': (index === 0 ? '0' : '12px'),
+                 }">
+              <!-- TODO: Implement "Select all" -->
+              <!-- <input type="checkbox" /> -->
+              {{input.name}}
+              <div v-for="ch in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]" :key="ch"
+                  style="margin-left: 16px;">
+                <!-- TODO: Restore check state if this modal window is shown again -->
+                <input type="checkbox" @change="onMidiInputChannelToggled(input, ch, $event.target.checked)" />
+                CH{{ch}}
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div>MIDI inputs are not available!</div>
+          </template>
+        </template>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -665,6 +724,10 @@ export default {
           ],
         },
       ],
+      midiAccess: null,
+      midiInputs: null,
+      midiOutputs: null,
+      selectedMidiInputs: [],
     };
   },
   computed: {
@@ -1152,6 +1215,95 @@ export default {
       }
 
       return [newChordIntervalA, newChordIntervalB];
+    },
+    startMidiInputConfiguration() {
+      // Show alert dialog if it is a first attempt to get MIDI access
+      if (this.midiAccess == null && !window.confirm('All Input/Output MIDI devices will be locked after configuring input MIDI devices. Are you sure?')) {
+        return;
+      }
+
+      // show static modal
+      this.$modal.show('midi-input-configuration');
+
+      // requestMIDIAccess
+      if (this.midiAccess == null) {
+        setTimeout(() => {
+          navigator.requestMIDIAccess({ sysex: false, software: false })
+          .then((ma) => {
+            console.log(ma);
+            this.midiAccess = ma;
+            this.midiAccess.onstatechange = (e) => {
+              console.log(e);
+              console.log('MIDI access state is changed. Updating MIDI inputs/outputs array...');
+              this.midiInputs = Array.from(ma.inputs.values());
+              this.midiOutputs = Array.from(ma.outputs.values());
+            };
+
+            console.log('MIDI access is established. Updating MIDI inputs/outputs array...');
+
+            this.midiInputs = Array.from(ma.inputs.values());
+            this.midiOutputs = Array.from(ma.outputs.values());
+            console.log(this.midiInputs);
+            console.log(this.midiOutputs);
+          })
+          .catch((e) => {
+            console.error('Failed to get MIDI access.');
+            throw e;
+          })
+          .then(() => { // = finally
+          });
+        }, 500);
+      }
+    },
+    disconnectMidiInput() {
+      if (window.confirm('You need to reload the page to disconnect MIDI devices and make them available for other DAW applications. Are you sure?')) {
+        location.reload();
+      }
+    },
+    onMidiInputChannelToggled(input, channel, checked) {
+      console.log(`${input}, ${channel}, ${checked}`);
+      const targetMidiInput = this.selectedMidiInputs.find(v => v.ref === input);
+
+      if (targetMidiInput == null) {
+        if (checked) {
+          // Add new entry
+          const newVal = {
+            ref: input,
+            channels: [channel],
+            midiMessageListener: (event) => {
+              console.log(`[${input.name}]`);
+              let str = "MIDI message received at timestamp " + event.timestamp + "[" + event.data.length + " bytes]: ";
+
+              // Ignore MIDI events from not selected channels
+              if (false) {
+                return;
+              }
+
+              for (let i=0; i<event.data.length; i++) {
+                str += "0x" + event.data[i].toString(16) + " ";
+              }
+              console.log( str );
+            },
+          };
+          this.selectedMidiInputs.push(newVal);
+
+          input.onmidimessage = newVal.midiMessageListener; // Start listening
+        }
+      } else {
+        if (checked) {
+          // Add channel
+          targetMidiInput.channels.push(channel);
+        } else {
+          // Remove channel
+          targetMidiInput.channels.splice(targetMidiInput.channels.findIndex(v => v === channel), 1);
+
+          // Remove entry
+          if (targetMidiInput.channels.length === 0) {
+            targetMidiInput.ref.onmidimessage = null; // Stop listening to MIDI messages to this MIDI input
+            this.selectedMidiInputs.splice(this.selectedMidiInputs.findIndex(v => v === targetMidiInput), 1);
+          }
+        }
+      }
     },
   },
   components: {

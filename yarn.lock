@@ -7077,6 +7077,10 @@ vue-jest@^1.0.2:
     tsconfig "^7.0.0"
     vue-template-es2015-compiler "^1.5.3"
 
+vue-js-modal@^1.3.8:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/vue-js-modal/-/vue-js-modal-1.3.8.tgz#72a51d7e9979c9f5bb91d4367a84386d30479e69"
+
 vue-loader@^13.3.0:
   version "13.6.1"
   resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-13.6.1.tgz#3ad365271b3db382722ab2eb0d6936d8d52ec2ce"
