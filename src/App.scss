@@ -66,6 +66,10 @@ a {
       height: 0 !important;
     }
   }
+
+  &.note-on {
+    background-color: #331933;
+  }
 }
 
 .pitch-row-wrapper {
@@ -140,6 +144,10 @@ a {
   .pitch-row-wrapper.root-tone > & {
     background-color: rgb(0, 0, 0);
   }
+
+  .pitch-row-wrapper.note-on > & {
+    background-color: #331933;
+  }
 }
 
 .note {
@@ -163,5 +171,9 @@ a {
 
   .pitch-row-wrapper.root-tone & {
     background-color: rgb(0, 0, 0);
+  }
+
+  .pitch-row-wrapper.note-on & {
+    background-color: #331933;
   }
 }

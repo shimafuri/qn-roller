@@ -124,6 +124,7 @@
                       'non-scale-tone': !(
                         [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
                         ),
+                      'note-on': isNoteOn[pitch],
                     }">
                   </div>
                 </div>
@@ -171,6 +172,7 @@
                       'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
                       'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
                       'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
+                      'note-on': isNoteOn[pitch],
                       }" :style="{
                       'position': 'absolute',
                       'width': '100%',
@@ -728,7 +730,16 @@ export default {
       midiInputs: null,
       midiOutputs: null,
       selectedMidiInputs: [],
+      isNoteOn: {},
     };
+  },
+  watch: {
+    isNoteOn: {
+      handler: function (val, oldVal) {
+        console.log('new: %s, old: %s', val, oldVal);
+      },
+      deep: true,
+    },
   },
   computed: {
     pitches() {
@@ -1283,6 +1294,19 @@ export default {
                 str += "0x" + event.data[i].toString(16) + " ";
               }
               console.log( str );
+
+              switch (event.data[0]) {
+                case 0x80: // Note Off
+                  this.isNoteOn[event.data[1]] = false;
+                  break;
+                case 0x90: // Note On
+                  this.isNoteOn[event.data[1]] = true;
+                  break;
+                default:
+                  console.error(`Unsupported MIDI message type: ${event.data[0]}`);
+              }
+              console.log(this.isNoteOn);
+              this.rerender();
             },
           };
           this.selectedMidiInputs.push(newVal);
