@@ -74,135 +74,136 @@
         </div>
       </div>
       <div style="flex: 1; height: 0; display: flex; flex-flow: row nowrap;">
-      <!-- Track List (Left) -->
-      <div style="width: 192px; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
-        <div style="flex: 1; height: 0; background-color: rgb(94, 101, 108); margin-right: 1px;"></div>
-      </div>
-      <!-- Track Editor (Right) -->
-      <div style="flex: 1; width: 0; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
-        <!-- Top part -->
-        <div style="height: 48px;">
-          <!-- Left/Right divider -->
-          <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
-            <!-- Left side -->
-            <div style="width: 64px; background-color: rgb(39, 42, 45);">
-              <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
-            </div>
-            <!-- Right side (horizontally scrollable) -->
-            <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
-                @scroll="onScroll_headerPane($event)">
-              <!-- Content -->
-              <div :style="{
-                  'display': 'flex',
-                  'flex-flow': 'row nowrap',
-                  'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-                  'height': '48px',
-                  'background-color': 'rgb(42, 45, 49)',
-                  'transform': 'translate3d(0, 0, 0)',
-                  }">
-                <!-- Scale interval indicators -->
-                <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
-              </div>
-            </div>
-          </div>
+        <!-- Track List (Left) -->
+        <div style="width: 192px; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
+          <div style="flex: 1; height: 0; background-color: rgb(94, 101, 108); margin-right: 1px;"></div>
         </div>
-        <!-- Bottom part -->
-        <div style="flex: 1; height: 0;">
-          <!-- Left/Right divider -->
-          <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
-            <!-- Left side -->
-            <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
-              <!-- Content viewport (vertically scrollable) -->
-              <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
-                @scroll="onScroll_pitchesPane($event)">
+        <!-- Track Editor (Right) -->
+        <div style="flex: 1; width: 0; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
+          <!-- Top part -->
+          <div style="height: 48px;">
+            <!-- Left/Right divider -->
+            <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
+              <!-- Left side -->
+              <div style="width: 64px; background-color: rgb(39, 42, 45);">
+                <button @click="flagCollapse = !flagCollapse">{{flagCollapse}}</button>
+              </div>
+              <!-- Right side (horizontally scrollable) -->
+              <div ref="headerPane" class="no-scrollbar-holizontal" style="margin-right: 17px; flex: 1; overflow: scroll; background-color: blue;"
+                  @scroll="onScroll_headerPane($event)">
                 <!-- Content -->
-                <div
-                  :style="{
-                    'width': '100%',
-                    'height': (pitches.length * pitchHeight) + 'px',
-                    'background-color': 'rgb(240, 242, 243)',
+                <div :style="{
+                    'display': 'flex',
+                    'flex-flow': 'row nowrap',
+                    'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
+                    'height': '48px',
+                    'background-color': 'rgb(42, 45, 49)',
                     'transform': 'translate3d(0, 0, 0)',
                     }">
-                  <div v-for="pitch in pitches" :key="pitch" :style="{
-                    'height': pitchHeight + 'px',
-                    }"
-                    :class="{
-                      'piano-key': true,
-                      'scale-tone': (
-                        [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                        ),
-                      'non-scale-tone': !(
-                        [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
-                        ),
-                      'note-on': isNoteOn[pitch],
-                    }">
-                  </div>
+                  <!-- Scale interval indicators -->
+                  <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
                 </div>
               </div>
-              <!-- Content viewport border -->
-              <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
             </div>
-            <!-- Right side -->
-            <div ref="notesPane"
-                style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
-                @scroll="onScroll_notesPane($event)">
-              <!-- Content -->
-              <div :style="{
-                  'display': 'flex',
-                  'flex-flow': 'row nowrap',
-                  'position': 'relative',
-                  'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-                  'height': (pitches.length * pitchHeight) + 'px',
-                  'transform': 'translate3d(0, 0, 0)',
-                  'transform-style': 'preserve-3d',
-                  }">
-                <!-- Scale intervals -->
-                <div v-for="int in scaleIntervals" :key="int.id" :style="{
-                  'display': 'flex',
-                  'flex-flow': 'row nowrap',
-                  'box-sizing': 'border-box',
-                  'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
-                  'height': '100%',
-                  'box-shadow': 'inset 0 0 2px black',
-                  }">
-                  <!-- Chord intervals -->
-                  <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
-                    'position': 'relative',
+          </div>
+          <!-- Bottom part -->
+          <div style="flex: 1; height: 0;">
+            <!-- Left/Right divider -->
+            <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap; background-color: rgb(33, 35, 38);">
+              <!-- Left side -->
+              <div style="position: relative; margin-bottom: 17px; width: 64px; background-color: green;">
+                <!-- Content viewport (vertically scrollable) -->
+                <div ref="pitchesPane" class="no-scrollbar" style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0;"
+                  @scroll="onScroll_pitchesPane($event)">
+                  <!-- Content -->
+                  <div
+                    :style="{
+                      'width': '100%',
+                      'height': (pitches.length * pitchHeight) + 'px',
+                      'background-color': 'rgb(240, 242, 243)',
+                      'transform': 'translate3d(0, 0, 0)',
+                      }">
+                    <div v-for="pitch in pitches" :key="pitch" :style="{
+                      'height': pitchHeight + 'px',
+                      }"
+                      :class="{
+                        'piano-key': true,
+                        'scale-tone': (
+                          [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                          ),
+                        'non-scale-tone': !(
+                          [0, 2, 4, 5, 7, 9, 11].includes(pitch % 12)
+                          ),
+                        'note-on': isNoteOn[pitch],
+                      }">
+                    </div>
+                  </div>
+                </div>
+                <!-- Content viewport border -->
+                <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; box-shadow: inset 0px 0px 0px 1px rgb(24, 24, 24); pointer-events: none;"></div>
+              </div>
+              <!-- Right side -->
+              <div ref="notesPane"
+                  style="flex: 1; overflow: scroll; background-color: rgb(50, 53, 56);"
+                  @scroll="onScroll_notesPane($event)">
+                <!-- Content -->
+                <div :style="{
                     'display': 'flex',
-                    'flex-flow': 'column nowrap',
-                    'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
-                    'height': '100%',
-                    'box-shadow': 'inset 0 0 2px red',
+                    'flex-flow': 'row nowrap',
+                    'position': 'relative',
+                    'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
+                    'height': (pitches.length * pitchHeight) + 'px',
+                    'transform': 'translate3d(0, 0, 0)',
                     'transform-style': 'preserve-3d',
                     }">
-                    <!-- Pitch row wrappers -->
-                    <div v-for="pitch in pitches" :key="pitch" :class="{
-                      'pitch-row-wrapper': true,
-                      'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
-                      'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
-                      'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
-                      'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
-                      'note-on': isNoteOn[pitch],
-                      }" :style="{
-                      'position': 'absolute',
-                      'width': '100%',
-                      'height': pitchHeight + 'px',
-                      'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                  <!-- Scale intervals -->
+                  <div v-for="int in scaleIntervals" :key="int.id" :style="{
+                    'display': 'flex',
+                    'flex-flow': 'row nowrap',
+                    'box-sizing': 'border-box',
+                    'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
+                    'height': '100%',
+                    'box-shadow': 'inset 0 0 2px black',
+                    }">
+                    <!-- Chord intervals -->
+                    <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
+                      'position': 'relative',
+                      'display': 'flex',
+                      'flex-flow': 'column nowrap',
+                      'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
+                      'height': '100%',
+                      'box-shadow': 'inset 0 0 2px red',
                       'transform-style': 'preserve-3d',
                       }">
-                      <!-- Pitch row -->
-                        <pitch-row :scale-interval="int" :chord-interval="chd" :pitch="pitch" />
-                    </div>
-                    <!-- Beat indicators -->
-                    <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
-                      'position': 'absolute',
-                      'top': '0',
-                      'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
-                      'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
-                      'height': '100%',
-                      'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
-                      'pointer-events': `none`,
-                    }">
+                      <!-- Pitch row wrappers -->
+                      <div v-for="pitch in pitches" :key="pitch" :class="{
+                        'pitch-row-wrapper': true,
+                        'scale-tone': (int.scale == null ? true : int.scale.includes(pitch % 12)),
+                        'non-scale-tone': (int.scale == null ? false : !int.scale.includes(pitch % 12)),
+                        'central-tone': (int.scale == null ? false : pitch % 12 === int.scale[0]),
+                        'root-tone': (int.scale == null ? false : (chd.chord == null ? false : pitch % 12 === chd.chord[0])),
+                        'note-on': isNoteOn[pitch],
+                        }" :style="{
+                        'position': 'absolute',
+                        'width': '100%',
+                        'height': pitchHeight + 'px',
+                        'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                        'transform-style': 'preserve-3d',
+                        }">
+                        <!-- Pitch row -->
+                        <pitch-row :scale-interval="int" :chord-interval="chd" :pitch="pitch" @new-note="onNewNote" />
+                      </div>
+                      <!-- Beat indicators -->
+                      <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
+                        'position': 'absolute',
+                        'top': '0',
+                        'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                        'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                        'height': '100%',
+                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
+                        'pointer-events': `none`,
+                      }">
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -211,7 +212,6 @@
           </div>
         </div>
       </div>
-    </div>
     </div>
     <modal name="midi-input-configuration" height="auto">
       <div style="padding: 14px 16px; font-size: 14px;">
@@ -1095,6 +1095,16 @@ export default {
       );
       this.rerender();
     },
+    onNewNote(parentChordInterval, localOffset, duration, pitch) {
+      // console.log('onNewNote');
+      // console.log(`localOffset: ${localOffset} - duration: ${duration} - pitch: ${pitch}`);
+      parentChordInterval.notes.push({
+        id: Math.random(),
+        localOffset: localOffset,
+        duration: duration,
+        pitch: pitch,
+      });
+    },
     /**
      * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
      * Allocates the chord intervals among the two scale intervals as needed.
@@ -1342,63 +1352,145 @@ export default {
           'height': '100%',
           'transform-style': 'preserve-3d',
           }">
+          <!-- Mouse down detector -->
+          <div :style="{
+                  'position': 'absolute',
+                  'top': '0',
+                  'left': '0',
+                  'width': '100%',
+                  'height': '100%',
+                }"
+                @mousedown="onMouseDown">
+          </div>
           <!-- Notes -->
-          <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note" />
+          <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch == pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note"
+            :style="{
+              'position': 'absolute',
+              'top': '0',
+              'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
+              'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
+              'height': '100%',
+          }" />
+          <!-- Input indicator -->
+          <note :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="{pitch: pitch}"
+            :style="{
+              'position': 'absolute',
+              'top': '0',
+              'left': ((newNoteLocalOffset / 1920.0) * global.barWidth) + 'px',
+              'width': ((newNoteDuration / 1920.0) * global.barWidth) + 'px',
+              'height': '100%',
+              'display': inputting ? 'flex !important' : 'none !important',
+          }" />
+          </div>
         </div>
       `,
       data() {
         return {
           global: global,
+          notesPane: null, // to be assigned
+          inputting: false,
+          newNoteLocalOffset: null,
+          newNoteDuration: null,
         };
       },
       props: ['scaleInterval', 'chordInterval', 'pitch'],
+      methods: {
+        onMouseDown: function ($event) {
+          this.inputting = true;
+
+          const updateNewNoteDuration = (eventPageX) => {
+            this.newNoteDuration = Math.round(((((this.notesPane.scrollLeft + eventPageX) - getPageXY(this.$el).x)+1) / this.$el.offsetWidth) * this.chordInterval.duration) - this.newNoteLocalOffset;
+            // console.log(this.newNoteDuration);
+            if (this.newNoteDuration < (true ? global.granularity : 0)) { // Lower boundary clipping
+              this.newNoteDuration = (true ? global.granularity : 0);
+            }
+            // console.log(this.newNoteDuration);
+            if (true) { // Align the duration based on the granularity
+              if ((this.newNoteDuration % global.granularity) !== 0) {
+                this.newNoteDuration = this.newNoteDuration - (this.newNoteDuration % global.granularity) + global.granularity;
+              }
+            }
+            // console.log(this.newNoteDuration);
+          };
+          this.newNoteLocalOffset = Math.round((((this.notesPane.scrollLeft + $event.pageX) - getPageXY(this.$el).x) / this.$el.offsetWidth) * this.chordInterval.duration);
+          // console.log(this.newNoteLocalOffset);
+          if (true) { // Align the local offset based on the granularity
+            this.newNoteLocalOffset = this.newNoteLocalOffset - (this.newNoteLocalOffset % global.granularity);
+          }
+          // console.log(this.newNoteLocalOffset);
+          updateNewNoteDuration($event.pageX);
+
+          let onMouseMove;
+          let onMouseUp;
+          onMouseMove = (event) => {
+            // console.log('mousemove');
+            // console.log(event.pageX);
+            // console.log(getPageXY(this.$el).x);
+            updateNewNoteDuration(event.pageX);
+          };
+          onMouseUp = (event) => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+
+            this.$emit('new-note', this.chordInterval, this.newNoteLocalOffset, this.newNoteDuration, this.pitch);
+            this.inputting = false;
+            this.newNoteLocalOffset = null;
+            this.newNoteDuration = null;
+          };
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+        },
+      },
+      mounted() {
+        try {
+          this.notesPane = this.$parent.$refs.notesPane || this.$parent.$parent.$refs.notesPane || this.$parent.$parent.$parent.$refs.notesPane;
+        } catch (e) {
+          console.error('Notes pane is not found!');
+          throw e;
+        }
+      },
       components: {
-    'note': {
-      template: `
-        <div class="note"
-              :style="{
-              'display': 'flex',
-              'align-items': 'center',
-              'white-space': 'nowrap',
-              'position': 'absolute',
-              'box-sizing': 'border-box',
-              'border': ((this.scaleInterval.scale == null ? false : (this.chordInterval.chord == null ? false : this.note.pitch % 12 === this.chordInterval.chord[0])) ? '1px white solid' : '1px black solid'),
-              'top': '0',
-              'left': ((note.localOffset / 1920.0) * global.barWidth) + 'px',
-              'padding-left': '4px',
-              'width': ((note.duration / 1920.0) * global.barWidth) + 'px',
-              'height': '100%',
-              'font-size': '10px',
-              'overflow': 'hidden',
-              'color': 'white',
-              'text-align': 'left',
-              'transform': 'translateZ(100px)',
-          }">
-          <template v-if="scaleInterval.scale != null">
-            <template v-if="chordInterval.chord != null">
+        'note': {
+          template: `
+            <div class="note"
+                  :style="{
+                  'display': 'flex',
+                  'align-items': 'center',
+                  'white-space': 'nowrap',
+                  'box-sizing': 'border-box',
+                  'border': ((this.scaleInterval.scale == null ? false : (this.chordInterval.chord == null ? false : this.note.pitch % 12 === this.chordInterval.chord[0])) ? '1px white solid' : '1px black solid'),
+                  'padding-left': '4px',
+                  'font-size': '10px',
+                  'overflow': 'hidden',
+                  'color': 'white',
+                  'text-align': 'left',
+                  'transform': 'translateZ(100px)',
+              }">
+              <template v-if="scaleInterval.scale != null">
+                <template v-if="chordInterval.chord != null">
               <template v-if="chordInterval.chord[0] !== note.pitch % 12"><!-- Show the degree label if it is a root tone -->
                 {{global.getIntervalsFromRoot(scaleInterval.scale, chordInterval.chord[0], note.pitch % 12).join(' or ')}}
               </template>
               <template v-else>
-                {{global.getDegreeLabels(scaleInterval.scale, note.pitch % 12).join(' or ')}}
+                  {{global.getDegreeLabels(scaleInterval.scale, note.pitch % 12).join(' or ')}}
+                </template>
+            </template>
+                <template v-else>
+                  {{global.getDegreeLabels(scaleInterval.scale, note.pitch % 12).join(' or ')}}
+                </template>
               </template>
-            </template>
-            <template v-else>
-              {{global.getDegreeLabels(scaleInterval.scale, note.pitch % 12).join(' or ')}}
-            </template>
-          </template>
-          <template v-else>
-            {{global.getNoteNames(note.pitch % 12).join(' or ')}}
-          </template>
-        </div>
-      `,
-      data() {
-        return {
-          global: global,
-        };
-      },
-      props: ['scaleInterval', 'chordInterval', 'note'],
-    },
+              <template v-else>
+                {{global.getNoteNames(note.pitch % 12).join(' or ')}}
+              </template>
+            </div>
+          `,
+          data() {
+            return {
+              global: global,
+            };
+          },
+          props: ['scaleInterval', 'chordInterval', 'note'],
+        },
       },
     },
     'scale-interval-indicator': {
