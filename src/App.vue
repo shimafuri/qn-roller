@@ -191,17 +191,7 @@
                       'transform-style': 'preserve-3d',
                       }">
                       <!-- Pitch row -->
-                      <div :class="{
-                        'pitch-row': true,
-                        }" :style="{
-                        'position': 'relative',
-                        'width': '100%',
-                        'height': '100%',
-                        'transform-style': 'preserve-3d',
-                        }">
-                        <!-- Notes -->
-                        <note v-for="note in chd.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="int" :chord-interval="chd" :note="note" />
-                      </div>
+                        <pitch-row :scale-interval="int" :chord-interval="chd" :pitch="pitch" />
                     </div>
                     <!-- Beat indicators -->
                     <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
@@ -1342,6 +1332,27 @@ export default {
     },
   },
   components: {
+    'pitch-row': {
+      template: `
+        <div :class="{
+          'pitch-row': true,
+          }" :style="{
+          'position': 'relative',
+          'width': '100%',
+          'height': '100%',
+          'transform-style': 'preserve-3d',
+          }">
+          <!-- Notes -->
+          <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch === pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note" />
+        </div>
+      `,
+      data() {
+        return {
+          global: global,
+        };
+      },
+      props: ['scaleInterval', 'chordInterval', 'pitch'],
+      components: {
     'note': {
       template: `
         <div class="note"
@@ -1387,6 +1398,8 @@ export default {
         };
       },
       props: ['scaleInterval', 'chordInterval', 'note'],
+    },
+      },
     },
     'scale-interval-indicator': {
       template: `
