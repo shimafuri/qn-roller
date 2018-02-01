@@ -1397,6 +1397,7 @@ export default {
       methods: {
         onMouseDown: function ($event) {
           this.inputting = true;
+          MIDI.noteOn(0, this.pitch, 100, 0);
 
           const updateNewNoteDuration = (eventPageX) => {
             this.newNoteDuration = Math.round(((((this.notesPane.scrollLeft + eventPageX) - getPageXY(this.$el).x)+1) / this.$el.offsetWidth) * this.chordInterval.duration) - this.newNoteLocalOffset;
@@ -1431,6 +1432,7 @@ export default {
           onMouseUp = (event) => {
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
+            MIDI.noteOff(0, this.pitch, 0);
 
             this.$emit('new-note', this.chordInterval, this.newNoteLocalOffset, this.newNoteDuration, this.pitch);
             this.inputting = false;
@@ -1796,6 +1798,15 @@ export default {
         },
       },
     },
+  },
+  beforeCreate() {
+    MIDI.loadPlugin({
+		    soundfontUrl: "static/vendor/MIDI.js/examples/soundfont/",
+        instrument: "acoustic_grand_piano",
+        onsuccess: function() {
+          MIDI.setVolume(0, 127);
+        },
+    });
   },
 };
 </script>
