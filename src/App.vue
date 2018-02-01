@@ -1309,9 +1309,11 @@ export default {
               switch (event.data[0]) {
                 case 0x80: // Note Off
                   this.isNoteOn[event.data[1]] = false;
+                  MIDI.noteOff(0, event.data[1], 0);
                   break;
                 case 0x90: // Note On
                   this.isNoteOn[event.data[1]] = true;
+                  MIDI.noteOn(0, event.data[1], 100, 0);
                   break;
                 default:
                   console.error(`Unsupported MIDI message type: ${event.data[0]}`);
