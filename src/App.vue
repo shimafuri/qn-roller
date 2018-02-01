@@ -1319,7 +1319,7 @@ export default {
                   console.error(`Unsupported MIDI message type: ${event.data[0]}`);
               }
               console.log(this.isNoteOn);
-              this.rerender();
+              //this.rerender();
             },
           };
           this.selectedMidiInputs.push(newVal);
