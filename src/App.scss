@@ -153,10 +153,16 @@ a {
 .note {
   .pitch-row-wrapper.scale-tone & {
     background-color: rgb(62, 137, 155);
+    color: white;
+  }
+  .pitch-row-wrapper.scale-tone &.selected {
+    background-color: rgb(232, 165, 97);
+    color: black;
   }
 
   .pitch-row-wrapper.non-scale-tone & {
     background-color: rgb(247, 31, 31);
+    color: white;
     
     transition: border-radius 0.5s ease-in-out;
     
@@ -171,9 +177,15 @@ a {
 
   .pitch-row-wrapper.root-tone & {
     background-color: rgb(62, 137, 155);
+    color: white;
+  }
+  .pitch-row-wrapper.root-tone &.selected {
+    background-color: rgb(232, 165, 97);
+    color: black;
   }
 
   .pitch-row-wrapper.note-on & {
     background-color: #331933;
+    color: white;
   }
 }

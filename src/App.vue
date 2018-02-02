@@ -191,7 +191,7 @@
                         'transform-style': 'preserve-3d',
                         }">
                         <!-- Pitch row -->
-                        <pitch-row :scale-interval="int" :chord-interval="chd" :pitch="pitch" @new-note="onNewNote" />
+                        <pitch-row :scale-interval="int" :chord-interval="chd" :pitch="pitch" :selected-notes="selectedNotes" @new-note="onNewNote" />
                       </div>
                       <!-- Beat indicators -->
                       <div v-for="(beat, index) in divideDuration(chd.duration, 480)" :key="beat.localOffset" :style="{
@@ -602,6 +602,7 @@ export default {
           ],
         },
       ],
+      selectedNotes: [],
       midiAccess: null,
       midiInputs: null,
       midiOutputs: null,
@@ -973,12 +974,17 @@ export default {
     onNewNote(parentChordInterval, localOffset, duration, pitch) {
       // console.log('onNewNote');
       // console.log(`localOffset: ${localOffset} - duration: ${duration} - pitch: ${pitch}`);
-      parentChordInterval.notes.push({
+      const newNote = {
         id: Math.random(),
         localOffset: localOffset,
         duration: duration,
         pitch: pitch,
-      });
+      };
+      parentChordInterval.notes.push(newNote);
+
+      this.selectedNotes.length = 0;
+      this.selectedNotes.push(newNote);
+      console.log(this.selectedNotes);
     },
     /**
      * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
@@ -1241,6 +1247,9 @@ export default {
           </div>
           <!-- Notes -->
           <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch == pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note"
+            :class="{
+              'selected': selectedNotes.includes(note),
+            }"
             :style="{
               'position': 'absolute',
               'top': '0',
@@ -1272,7 +1281,7 @@ export default {
           newNoteDuration: null,
         };
       },
-      props: ['scaleInterval', 'chordInterval', 'pitch'],
+      props: ['scaleInterval', 'chordInterval', 'pitch', 'selectedNotes'],
       methods: {
         onMouseDown: function ($event) {
           this.inputting = true;
@@ -1343,7 +1352,6 @@ export default {
                   'padding-left': '4px',
                   'font-size': '10px',
                   'overflow': 'hidden',
-                  'color': 'white',
                   'text-align': 'left',
                   'transform': 'translateZ(100px)',
               }">
@@ -1680,7 +1688,7 @@ export default {
   },
   beforeCreate() {
     MIDI.loadPlugin({
-		    soundfontUrl: "static/vendor/MIDI.js/examples/soundfont/",
+        soundfontUrl: "static/vendor/MIDI.js/examples/soundfont/",
         instrument: "acoustic_grand_piano",
         onsuccess: function() {
           MIDI.setVolume(0, 127);
