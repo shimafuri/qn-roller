@@ -1257,6 +1257,8 @@ export default {
               'width': ((newNoteDuration / 1920.0) * global.barWidth) + 'px',
               'height': '100%',
               'display': inputting ? 'flex !important' : 'none !important',
+              'background-color': 'white !important',
+              'color': 'black !important',
           }" />
           </div>
         </div>
