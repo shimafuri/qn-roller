@@ -1008,7 +1008,6 @@ export default {
 
       this.selectedNotes.length = 0;
       this.selectedNotes.push(newNote);
-      console.log(this.selectedNotes);
     },
     /**
      * Divides the specified scale interval into the two intervals, A and B, based on the specified boundary.
