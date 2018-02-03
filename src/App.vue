@@ -86,7 +86,7 @@
         <!-- Track Editor (Right) -->
         <div style="flex: 1; width: 0; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
           <!-- Top part -->
-          <div style="height: 48px;">
+          <div style="height: 81px;">
             <!-- Left/Right divider -->
             <div style="width: 100%; height: 100%; display: flex; flex-flow: row nowrap;">
               <!-- Left side -->
@@ -99,16 +99,94 @@
                 <!-- Content -->
                 <div :style="{
                     'display': 'flex',
-                    'flex-flow': 'row nowrap',
+                    'flex-flow': 'column nowrap',
                     'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
-                    'height': '48px',
                     'background-color': 'rgb(42, 45, 49)',
+                    'height': '80px',
+                    'border-bottom': '1px rgb(31, 33, 36) solid',
+                    }">
+                  <!-- Beats bar -->
+                  <div :style="{
+                      'position': 'relative',
+                      'width': '100%',
+                      'height': '32px',
+                      'transform': 'translate3d(0, 0, 0)',
+                      }">
+                    <div :style="{
+                      'position': 'absolute',
+                      'bottom': '1px',
+                      'left': '0px',
+                      'width': '100%',
+                      'height': '1px',
+                      'background-color': `black`,
+                      'pointer-events': `none`,
+                    }">
+                    </div>
+                    <div :style="{
+                      'position': 'absolute',
+                      'bottom': '0px',
+                      'left': '0px',
+                      'width': '100%',
+                      'height': '1px',
+                      'background-color': `rgb(38, 40, 43)`,
+                      'pointer-events': `none`,
+                    }">
+                    </div>
+                    <!-- Beat indicators -->
+                    <div v-for="beat in divideDuration(totalDuration, 480)" :key="beat.localOffset" :style="{
+                      'position': 'absolute',
+                      'bottom': '1px',
+                      'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                      'width': '1px',
+                      'height': '4px',
+                      'background-color': `white`,
+                      'pointer-events': `none`,
+                    }">
+                    </div>
+                  </div>
+                  <!-- Scale/Chord intervals -->
+                  <div :style="{
+                      'position': 'relative',
+                      'width': '100%',
+                      'height': '48px',
+                      'transform': 'translate3d(0, 0, 0)',
+                      }">
+                    <div :style="{
+                        'position': 'absolute',
+                        'top': '0px',
+                        'left': '0px',
+                        'width': '100%',
+                        'height': '100%',
+                        'transform': 'translate3d(0, 0, 0)',
+                        }">
+                      <!-- Beat indicators -->
+                      <div v-for="beat in divideDuration(totalDuration, 480)" :key="beat.localOffset" :style="{
+                        'position': 'absolute',
+                        'top': '0',
+                        'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                        'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                        'height': '100%',
+                        'background-image': `linear-gradient(to right, rgb(61, 63, 65) 0, rgb(61, 63, 65) 1px, transparent 1px, transparent 100%)`,
+                        'pointer-events': `none`,
+                      }">
+                      </div>
+                    </div>
+                    <div :style="{
+                        'position': 'absolute',
+                        'top': '0px',
+                        'left': '0px',
+                        'display': 'flex',
+                        'flex-flow': 'row nowrap',
+                        'width': '100%',
+                        'height': '100%',
                     'transform': 'translate3d(0, 0, 0)',
                     }">
                   <!-- Scale interval indicators -->
                   <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
                 </div>
               </div>
+            </div>
+          </div>
             </div>
           </div>
           <!-- Bottom part -->
