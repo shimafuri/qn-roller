@@ -62,11 +62,12 @@
       <!-- Content wrapper border -->
       <div style="position: absolute; width: 100%; height: 100%; top: 0; right: 0; bottom: 0; left: 0; background-image: linear-gradient(to top, black 0px, black 1px, transparent 1px, transparent 100%); pointer-events: none;"></div>
     </div>
-    <!-- Main part -->
+    <!-- Editor part -->
     <div style="flex: 1; height: 0; margin: 2px; border: 1px solid black; display: flex; flex-flow: column nowrap;"
          tabindex="0"
          @keyup.8="onBackSpace"
          @keyup.46="onDelete">
+      <!-- Editor tool bar part -->
       <div style="height: 36px; background-color: rgb(94, 101, 108); border-bottom: 1px solid black; display: flex; flex-flow: row nowrap;">
         <div style="height: 24px; width: 159px; background-color: transparent;"></div>
         <div style="height: 100%; width: 32px; background-color: rgb(63, 140, 191); display: flex; flex-flow: row nowrap; align-items: center; justify-content: center; font-size: 7px; color: white;">
@@ -76,6 +77,7 @@
           Edit
         </div>
       </div>
+      <!-- Editor main part -->
       <div style="flex: 1; height: 0; display: flex; flex-flow: row nowrap;">
         <!-- Track List (Left) -->
         <div style="width: 192px; background-color: rgb(29, 30, 32); display: flex; flex-flow: column nowrap;">
