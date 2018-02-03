@@ -1269,7 +1269,7 @@ export default {
                 @mousedown="onMouseDown">
           </div>
           <!-- Notes -->
-          <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch == pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note"
+          <note v-for="note in chordInterval.notes" :key="note.id" v-if="note.pitch == pitch" :scale-interval="scaleInterval" :chord-interval="chordInterval" :note="note" :selected-notes="selectedNotes"
             :class="{
               'selected': selectedNotes.includes(note),
             }"
@@ -1377,7 +1377,9 @@ export default {
                   'overflow': 'hidden',
                   'text-align': 'left',
                   'transform': 'translateZ(100px)',
-              }">
+              }"
+              @mousedown="onMouseDown"
+            >
               <template v-if="scaleInterval.scale != null">
                 <template v-if="chordInterval.chord != null">
               <template v-if="chordInterval.chord[0] !== note.pitch % 12"><!-- Show the degree label if it is a root tone -->
@@ -1401,7 +1403,23 @@ export default {
               global: global,
             };
           },
-          props: ['scaleInterval', 'chordInterval', 'note'],
+          props: ['scaleInterval', 'chordInterval', 'note', 'selectedNotes'],
+          methods: {
+            onMouseDown: function($event) {
+              MIDI.noteOn(0, this.note.pitch, 100, 0);
+              if (!$event.shiftKey) {
+                this.selectedNotes.length = 0;
+              }
+              this.selectedNotes.push(this.note);
+
+              let onMouseUp;
+              onMouseUp = (event) => {
+                window.removeEventListener('mouseup', onMouseUp);
+                MIDI.noteOff(0, this.note.pitch, 0);
+              };
+              window.addEventListener('mouseup', onMouseUp);
+            },
+          },
         },
       },
     },
