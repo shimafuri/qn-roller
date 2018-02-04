@@ -111,7 +111,8 @@
                       'width': '100%',
                       'height': '32px',
                       'transform': 'translate3d(0, 0, 0)',
-                      }">
+                      }"
+                      @mouseup="onMouseUp_BeatsBar">
                     <div :style="{
                       'position': 'absolute',
                       'bottom': '1px',
@@ -297,6 +298,16 @@
                     'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
                     'height': '100%',
                     'background-image': `linear-gradient(to right, rgb(61, 63, 65) 0, rgb(61, 63, 65) 1px, transparent 1px, transparent 100%)`,
+                    'pointer-events': `none`,
+                  }">
+                  </div>
+                  <div :style="{
+                    'position': 'absolute',
+                    'top': '0',
+                    'left': ((playingOffset / 1920.0) * global.barWidth) + 'px',
+                    'width': '1px',
+                    'height': '100%',
+                    'background-color': `rgba(255, 255, 255, 0.5)`,
                     'pointer-events': `none`,
                   }">
                   </div>
@@ -654,6 +665,52 @@ const global = {
     // console.log(retval);
     return retval;
   },
+  getTransposeDistance(originalScale) {
+    if (originalScale == null) { throw new Error(`Invalid scale: ${JSON.stringify(originalScale)}`); }
+
+    const normalizedScale = global.getNormalizedScale(originalScale);
+
+    switch (JSON.stringify(normalizedScale)) {
+      case JSON.stringify([0, 2, 4, 5, 7, 9, 11]): // Major scale
+        switch (originalScale[0]) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            return originalScale[0];
+          case 6:
+          case 7:
+          case 8:
+          case 9:
+          case 10:
+          case 11:
+            return -(12 - originalScale[0]);
+        }
+      case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
+        switch (originalScale[0]) {
+          case 9:
+          case 10:
+          case 11:
+          case 0:
+          case 1:
+          case 2:
+            return (((originalScale[0]-9)+12)%12);
+          case 3:
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+          case 8:
+            return -(12 - (((originalScale[0]-9)+12)%12));
+        }
+      case null:
+        return 0;
+      default:
+        throw new Error(`Unknown scale (${originalScale.map(v => v.join('/')).join(', ')})`);
+    }
+  }
 };
 const getPageXY = (element) => {
   let xPosition = 0;
@@ -697,6 +754,7 @@ export default {
         },
       ],
       selectedNotes: [],
+      playingOffset: 0,
       midiAccess: null,
       midiInputs: null,
       midiOutputs: null,
@@ -739,6 +797,22 @@ export default {
         }
       };
       rec(this);
+    },
+    playingScale() {
+      let retval = null;
+      let tempOffset = this.playingOffset;
+      for (const si of this.scaleIntervals) { // Identify the scale interval on which the current playing offset is
+        if (tempOffset >= 0 && tempOffset < si.duration) {
+          retval = si.scale;
+          break;
+        } else {
+          tempOffset -= si.duration;
+        }
+      }
+      return retval;
+    },
+    transposeDistance() {
+      return global.getTransposeDistance(this.playingScale());
     },
     /**
      * Divides the specified duration into several durations based on the specified unit.
@@ -1037,6 +1111,9 @@ export default {
         this.$refs.pitchesPane.scrollTop = $event.target.scrollTop;
       }
     },
+    onMouseUp_BeatsBar($event) {
+      this.playingOffset = Math.round((((this.$refs.headerPane.scrollLeft + $event.pageX) - getPageXY($event.target).x) / $event.target.offsetWidth) * this.totalDuration);
+    },
     onNewScaleInterval(baseScaleInterval, localOffset, duration) {
       // console.log(`onNewScaleInterval`);
       // console.log(`scale duration: ${baseScaleInterval.duration} - localOffset: ${localOffset} - duration: ${duration}`);
@@ -1302,14 +1379,20 @@ export default {
               console.log( str );
 
               switch (event.data[0]) {
-                case 0x80: // Note Off
-                  this.isNoteOn[event.data[1]] = false;
-                  MIDI.noteOff(0, event.data[1], 0);
+                case 0x80: { // Note Off
+                  const note = event.data[1] + this.transposeDistance();
+                  if (note < 0 || note > 127) { break; }
+                  this.isNoteOn[note] = false;
+                  MIDI.noteOff(0, note, 0);
                   break;
-                case 0x90: // Note On
-                  this.isNoteOn[event.data[1]] = true;
-                  MIDI.noteOn(0, event.data[1], 100, 0);
+                }
+                case 0x90: { // Note On
+                  const note = event.data[1] + this.transposeDistance();
+                  if (note < 0 || note > 127) { break; }
+                  this.isNoteOn[note] = true;
+                  MIDI.noteOn(0, note, 100, 0);
                   break;
+                }
                 default:
                   console.error(`Unsupported MIDI message type: ${event.data[0]}`);
               }
