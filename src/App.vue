@@ -179,14 +179,14 @@
                         'flex-flow': 'row nowrap',
                         'width': '100%',
                         'height': '100%',
-                    'transform': 'translate3d(0, 0, 0)',
-                    }">
-                  <!-- Scale interval indicators -->
-                  <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
+                        'transform': 'translate3d(0, 0, 0)',
+                        }">
+                      <!-- Scale interval indicators -->
+                      <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
             </div>
           </div>
           <!-- Bottom part -->
@@ -283,11 +283,22 @@
                         'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
                         'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
                         'height': '100%',
-                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 0, ${int.scale == null ? 'rgb(56, 58, 60)' : (index === 0 && chd.chord != null ? 'black' : 'rgb(46, 48, 50)')} 1px, transparent 1px, transparent 100%)`,
+                        'background-image': `linear-gradient(to right, ${int.scale == null ? 'transparent' : (index === 0 && chd.chord != null ? 'black' : 'transparent')} 0, ${int.scale == null ? 'transparent' : (index === 0 && chd.chord != null ? 'black' : 'transparent')} 1px, transparent 1px, transparent 100%)`,
                         'pointer-events': `none`,
                       }">
                       </div>
                     </div>
+                  </div>
+                  <!-- Beat indicators -->
+                  <div v-for="beat in divideDuration(totalDuration, 480)" :key="beat.localOffset" :style="{
+                    'position': 'absolute',
+                    'top': '0',
+                    'left': ((beat.localOffset / 1920.0) * global.barWidth) + 'px',
+                    'width': ((beat.duration / 1920.0) * global.barWidth) + 'px',
+                    'height': '100%',
+                    'background-image': `linear-gradient(to right, rgb(61, 63, 65) 0, rgb(61, 63, 65) 1px, transparent 1px, transparent 100%)`,
+                    'pointer-events': `none`,
+                  }">
                   </div>
                 </div>
               </div>
