@@ -57,6 +57,7 @@
               </div>
             </span>
           </template>
+          {{playingScale()}}
         </div>
       </div>
       <!-- Content wrapper border -->
