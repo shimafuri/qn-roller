@@ -57,7 +57,7 @@ a {
   &.non-scale-tone {
     width: 41px;
     background-color: rgb(42, 47, 50);
-    transition: height 0.5s ease-in-out;
+    
 
     #app:not(.flag-collapse) & {
 
@@ -76,7 +76,7 @@ a {
   overflow: visible;
 
   &.non-scale-tone {
-    transition: height 0.5s ease-in-out;
+    
 
     #app:not(.flag-collapse) & {
     }
@@ -95,7 +95,7 @@ a {
   .pitch-row-wrapper.scale-tone > & {
     background-color: rgb(42, 45, 49);
 
-    transition: box-shadow 0.5s ease-in-out;
+    
     
     #app:not(.flag-collapse) .pitch-row-wrapper.non-scale-tone +
     .pitch-row-wrapper.scale-tone +
@@ -125,7 +125,7 @@ a {
     background-color: rgb(35, 37, 39);
     
     position: relative;
-    transition: top 0.5s ease-in-out, height 0.5s ease-in-out;
+    
 
     #app:not(.flag-collapse) & {
       top: 0;
@@ -164,7 +164,7 @@ a {
     background-color: rgb(247, 31, 31);
     color: white;
     
-    transition: border-radius 0.5s ease-in-out;
+    
     
     #app:not(.flag-collapse) & {
       border-radius: 0px;
