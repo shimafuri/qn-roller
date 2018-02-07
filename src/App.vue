@@ -372,7 +372,7 @@ const global = {
       case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
         return global.getNoteNames(originalScale[0]).map(v => `${v} minor`);
       default:
-        return `Unknown scale (${originalScale.map(v => v.join('/')).join(', ')})`;
+        return `Unknown scale (${originalScale.join(', ')})`;
     }
   },
   // This app always shows degree labels if a scale is given.
@@ -707,7 +707,8 @@ const global = {
       case null:
         return 0;
       default:
-        throw new Error(`Unknown scale (${originalScale.map(v => v.join('/')).join(', ')})`);
+        console.error(`Unknown scale (${originalScale.join(', ')})`);
+        return 0;
     }
   }
 };
