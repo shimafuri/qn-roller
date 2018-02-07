@@ -248,7 +248,6 @@
                     'box-sizing': 'border-box',
                     'width': ((int.duration / 1920.0) * global.barWidth) + 'px',
                     'height': '100%',
-                    'box-shadow': 'inset 0 0 2px black',
                     }">
                     <!-- Chord intervals -->
                     <div v-for="chd in int.chordIntervals" :key="chd.id" :style="{
@@ -257,7 +256,6 @@
                       'flex-flow': 'column nowrap',
                       'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                       'height': '100%',
-                      'box-shadow': 'inset 0 0 2px red',
                       'transform-style': 'preserve-3d',
                       }">
                       <!-- Pitch row wrappers -->
