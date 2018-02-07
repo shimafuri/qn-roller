@@ -270,7 +270,7 @@
                         'position': 'absolute',
                         'width': '100%',
                         'height': pitchHeight + 'px',
-                        'transform': `translate3d(0, ${(pitchMax - pitch) * pitchHeight}px, 0)`,
+                        'transform': `translate(0, ${global.getPositionInCollapseMode((flagCollapse && int.scale) || [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], pitch) * pitchHeight}px)`,
                         'transform-style': 'preserve-3d',
                         }">
                         <!-- Pitch row -->
@@ -710,7 +710,19 @@ const global = {
         console.error(`Unknown scale (${originalScale.join(', ')})`);
         return 0;
     }
+  },
+  getPositionInCollapseMode(originalScale, pitch) {
+    // When a -6 scale is given, count the number of scale tones in [127, pitch)
+    // When a 0 scale is given, count the number of scale tones in [127+6, pitch)
+    // When a +5 scale is given, count the number of scale tones in [127+11, pitch)
+    let position = 0;
+    for (let i = 127+(global.getTransposeDistance(originalScale)+6) ; i > pitch ; i--) {
+      if (originalScale.includes(i % 12)) {
+        position += 1;
+      }
   }
+    return position;
+  },
 };
 const getPageXY = (element) => {
   let xPosition = 0;
