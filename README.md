@@ -2,11 +2,16 @@
 
 > A Vue.js project
 
+## Demo
+
+https://shimafuri.github.io/qn-roller/
+
 ## Build Setup
 
 ``` bash
 # install dependencies
 npm install
+yarn install # Possibly required
 
 # serve with hot reload at localhost:8080
 npm run dev
