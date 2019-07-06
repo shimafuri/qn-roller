@@ -10,8 +10,8 @@ https://shimafuri.github.io/qn-roller/
 
 ``` bash
 # install dependencies
-npm install
-yarn install # Possibly required
+# npm install
+yarn install # Possibly Yarn is required
 
 # serve with hot reload at localhost:8080
 npm run dev
