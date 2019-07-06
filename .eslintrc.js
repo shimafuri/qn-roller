@@ -44,6 +44,19 @@ module.exports = {
     'space-infix-ops': 'off',
     'spaced-comment': 'off',
     'space-in-parens': 'off',
+
+
+    'arrow-spacing': 'off',
+    'quotes': 'off',
+    'no-undef': 'off',
+    'indent': 'off',
+    'arrow-parens': 'off',
+    'space-before-function-paren': 'off',
+    'no-fallthrough': 'off',
+    'default-case': 'off',
+    'no-unneeded-ternary': 'off',
+
+
     // don't require .vue extension when importing
     'import/extensions': ['error', 'always', {
       js: 'never',

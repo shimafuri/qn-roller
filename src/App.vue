@@ -111,7 +111,6 @@
                       'position': 'relative',
                       'width': '100%',
                       'height': '32px',
-                      'transform': 'translate3d(0, 0, 0)',
                       }"
                       @mouseup="onMouseUp_BeatsBar">
                     <div :style="{
@@ -151,7 +150,6 @@
                       'position': 'relative',
                       'width': '100%',
                       'height': '48px',
-                      'transform': 'translate3d(0, 0, 0)',
                       }">
                     <div :style="{
                         'position': 'absolute',
@@ -159,7 +157,6 @@
                         'left': '0px',
                         'width': '100%',
                         'height': '100%',
-                        'transform': 'translate3d(0, 0, 0)',
                         }">
                       <!-- Beat indicators -->
                       <div v-for="beat in divideDuration(totalDuration, 480)" :key="beat.localOffset" :style="{
@@ -181,7 +178,6 @@
                         'flex-flow': 'row nowrap',
                         'width': '100%',
                         'height': '100%',
-                        'transform': 'translate3d(0, 0, 0)',
                         }">
                       <!-- Scale interval indicators -->
                       <scale-interval-indicator v-for="int in scaleIntervals" :key="int.id" :scale-interval="int" @new-scale-interval="onNewScaleInterval" @new-chord-interval="onNewChordInterval" />
@@ -206,7 +202,6 @@
                       'width': '100%',
                       'height': (pitches.length * pitchHeight) + 'px',
                       'background-color': 'rgb(240, 242, 243)',
-                      'transform': 'translate3d(0, 0, 0)',
                       }">
                     <div v-for="pitch in pitches" :key="pitch" :style="{
                       'height': pitchHeight + 'px',
@@ -238,8 +233,6 @@
                     'position': 'relative',
                     'width': ((totalDuration / 1920.0) * global.barWidth) + 'px',
                     'height': (pitches.length * pitchHeight) + 'px',
-                    'transform': 'translate3d(0, 0, 0)',
-                    'transform-style': 'preserve-3d',
                     }">
                   <!-- Scale intervals -->
                   <div v-for="int in scaleIntervals" :key="int.id" :style="{
@@ -256,7 +249,6 @@
                       'flex-flow': 'column nowrap',
                       'width': ((chd.duration / 1920.0) * global.barWidth) + 'px',
                       'height': '100%',
-                      'transform-style': 'preserve-3d',
                       }">
                       <!-- Pitch row wrappers -->
                       <div v-for="pitch in pitches" :key="pitch" :class="{
@@ -353,7 +345,7 @@ const global = {
   barWidth: 128,
   barWidthMin: 4,
   barWidthMax: 2048,
-  granularity: 240, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
+  granularity: 120, // 1 quarter note = 480 ticks (de-facto standard in MIDI)
   getNormalizedScale(originalScale) {
     let normalizedScale;
     normalizedScale = JSON.parse(JSON.stringify(originalScale)); // Prevent destructive updating
@@ -433,7 +425,22 @@ const global = {
 
     switch (JSON.stringify(normalizedScale)) {
       case JSON.stringify([0, 2, 4, 5, 7, 9, 11]): // Major scale
-        throw new Error('The major scale is not supported yet.');
+        // throw new Error('The major scale is not supported yet.');
+        retval = [
+          ['Root'],
+          ['♯1', '♭2'],
+          ['2'],
+          ['♯2', '♭3'],
+          ['3'],
+          ['4'],
+          ['♯4', '♭5'],
+          ['5'],
+          ['♯5', '♭6'],
+          ['6'],
+          ['♯6', '♭7'],
+          ['7'],
+        ][chromaticInterval];
+        break;
       case JSON.stringify([0, 2, 3, 5, 7, 8, 10]): // Natural minor scale
         switch (normalizedRootPitchClass) {
           // [I, 2nd, 3rd, 4th, 5th, 6th, 7th] = [0, 2, 3, 5, 7, 8, 10]
@@ -712,6 +719,7 @@ const global = {
     }
   },
   getPositionInCollapseMode(originalScale, pitch) {
+    console.log(`originalScale: ${originalScale}, pitch: ${pitch}`);
     // When a -6 scale is given, count the number of scale tones in [127, pitch)
     // When a 0 scale is given, count the number of scale tones in [127+6, pitch)
     // When a +5 scale is given, count the number of scale tones in [127+11, pitch)
@@ -720,7 +728,7 @@ const global = {
       if (originalScale.includes(i % 12)) {
         position += 1;
       }
-  }
+    }
     return position;
   },
 };
@@ -752,13 +760,13 @@ export default {
       scaleIntervals: [
         {
           id: Math.random(),
-          duration: 1920 * 16,
+          duration: 1920 * 256,
           scale: null,
           chordIntervals: [
             {
               id: Math.random(),
               localOffset: 0,
-              duration: 1920 * 16,
+              duration: 1920 * 256,
               chord: null,
               notes: [],
             },
@@ -1137,7 +1145,7 @@ export default {
         [
           baseScaleIntervalIndex,
           1,
-          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset + duration, [9, 11, 0, 2, 4, 5, 7], null),
+          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset + duration, [0, 2, 4, 5, 7, 9, 11], null),
         ],
       );
       Array.prototype.splice.apply(
@@ -1145,7 +1153,7 @@ export default {
         [
           baseScaleIntervalIndex,
           1,
-          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset, null, [9, 11, 0, 2, 4, 5, 7]),
+          ...this.divideScaleInterval(targetArray[baseScaleIntervalIndex], localOffset, null, [0, 2, 4, 5, 7, 9, 11]),
         ],
       );
       this.rerender();
@@ -1562,7 +1570,6 @@ export default {
                   'font-size': '10px',
                   'overflow': 'hidden',
                   'text-align': 'left',
-                  'transform': 'translateZ(100px)',
               }"
               @mousedown="onMouseDown"
             >
@@ -1756,6 +1763,20 @@ export default {
           }
           (this.$parent.rerender || this.$parent.$parent.rerender || this.$parent.$parent.$parent.rerender)();
         },
+      },
+      beforeCreate() {
+        console.log(`C major - 127 - 123`);
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11], 127));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11], 126));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11], 125));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11], 124));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11], 123));
+        console.log(`C-6 major - 127 - 123`);
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11].map(v=>(v+6)%12), 127));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11].map(v=>(v+6)%12), 126));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11].map(v=>(v+6)%12), 125));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11].map(v=>(v+6)%12), 124));
+        console.log(global.getPositionInCollapseMode([0, 2, 4, 5, 7, 9, 11].map(v=>(v+6)%12), 123));
       },
       mounted() {
         try {
